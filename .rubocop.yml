@@ -1,0 +1,7 @@
+inherit_from: https://raw.githubusercontent.com/cookpad/styleguide/2bc5752f45145a69b7b51339cd4fd91a3d1e9219/.rubocop.yml
+
+Style/GlobalVars:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
