@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/reloader' if development?
 require_relative 'lib/poll'
 require_relative 'lib/vote'
 
