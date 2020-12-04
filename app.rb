@@ -32,3 +32,13 @@ post '/polls/:id/votes' do
 rescue Poll::InvalidCandidateError
   halt 400, '不正な候補名です'
 end
+
+get '/polls/:id/result' do
+  index = params['id'].to_i
+  poll = $polls[index]
+  halt 404, '投票が見つかりませんでした' if poll.nil?
+
+  result = poll.count_votes
+
+  erb :poll_result, locals: { poll: poll, result: result }
+end
