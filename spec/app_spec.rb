@@ -41,7 +41,7 @@ RSpec.describe 'PollApp' do
     end
   end
 
-  xdescribe 'POST /polls/:id/votes' do
+  describe 'POST /polls/:id/votes' do
     let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob']) }
 
     before do
