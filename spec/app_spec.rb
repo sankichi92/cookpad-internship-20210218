@@ -1,4 +1,3 @@
-=begin
 require 'sinatra/test_helpers'
 require_relative '../app'
 
@@ -81,4 +80,3 @@ RSpec.describe 'PollApp' do
     end
   end
 end
-=end
