@@ -1,0 +1,27 @@
+<h1><%= poll.title %></h1>
+
+<dl>
+  <dt>候補</dt>
+  <dd><%= poll.candidates.join(', ') %></dd>
+  <dt>投票数</dt>
+  <dd><%= poll.votes.size %></dd>
+</dl>
+
+<p>
+  <a href="/polls/<%= index %>/result">結果を見る</a>
+</p>
+
+<h2>新規投票</h2>
+<form action="/polls/<%= index %>/votes" method="post">
+  <label for="voter">あなたの名前</label>
+  <input id="voter" name="voter" type="text">
+
+  <label for="candidate">投票する候補名</label>
+  <input id="candidate" name="candidate" type="text">
+
+  <input type="submit" value="投票する">
+</form>
+
+<p>
+  <a href="/">戻る</a>
+</p>

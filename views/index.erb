@@ -1,0 +1,6 @@
+<h1>投票一覧</h1>
+<ul>
+  <% polls.each_with_index do |poll, i| %>
+    <li><a href="/polls/<%= i %>"><%= poll.title %></a></li>
+  <% end %>
+</ul>
