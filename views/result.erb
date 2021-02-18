@@ -1,13 +1,13 @@
-<h1><%= title %></h1>
+<h1><%= poll.title %></h1>
 
 <h2>結果</h2>
 <table>
   <tr><th>候補</th><th>数</th></tr>
-  <% result.each do |cand, n| %>
+  <% poll.count_votes().each do |cand, n| %>
     <tr><th><%= cand %></th><th><%= n %></th></tr>
   <% end %>
 </table>
 
 <p>
-  <a href="/">戻る</a>
+  <a href="/polls/<%=index%>">戻る</a>
 </p>
