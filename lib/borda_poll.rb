@@ -1,3 +1,5 @@
+require 'set'
+
 class BordaPoll
   class InvalidCandidateError < StandardError
   end
@@ -17,7 +19,7 @@ class BordaPoll
 
   def add_vote(vote)
     unless (vote.candidates.to_set ^ @candidates.to_set).length == 0 then
-      raise InvalidCandidateError.new(vote.candidate)
+      raise InvalidCandidateError.new(vote.candidates)
     end
 
     if @votes.map {|element| element.voter }.include?(vote.voter) then
@@ -29,14 +31,5 @@ class BordaPoll
     end
 
     @votes.push(vote)
-  end
-
-  def count_votes
-    votedCandidates = @votes.map {|element| element.candidates }
-    result = Hash.new(0)
-    for candidate in votedCandidates do
-      result[candidate] += 1
-    end
-    result
   end
 end
