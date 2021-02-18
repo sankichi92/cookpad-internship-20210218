@@ -1,4 +1,7 @@
 class Poll
+  class InvalidCandidateError < StandardError
+  end
+
   attr_reader :title, :candidates, :votes
 
   def initialize(title, candidates)
@@ -8,6 +11,10 @@ class Poll
   end
 
   def add_vote(vote)
+    if vote.candidate == 'INVALID' then
+      raise InvalidCandidateError.new(vote.candidate)
+    end
+
     @votes.push(vote)
   end
 end
