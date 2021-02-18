@@ -20,4 +20,16 @@ class Poll
       raise InvalidCandidateError
     end
   end
+
+  def count_votes()
+    ret = {}
+    votes.each do |vote|
+      if ret.include?(vote.candidate)
+        ret[vote.candidate] += 1
+      elsif
+        ret[vote.candidate] = 1
+      end
+    end
+    ret
+  end
 end
