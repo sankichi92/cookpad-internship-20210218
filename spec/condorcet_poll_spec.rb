@@ -72,6 +72,13 @@ RSpec.describe CondorcetPoll do
       poll.add_vote(RankedVote.new('Ellen', ['Bob', 'Alice']))
 
       expect(poll.count_votes).to eq 'Bob'
+
+      poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol'], DateTime.now + 10)
+      poll.add_vote(RankedVote.new('Carol', ['Alice', 'Carol', 'Carol']))
+      poll.add_vote(RankedVote.new('Dave', ['Bob', 'Alice', 'Alice']))
+      poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Bob', 'Bob']))
+
+      expect(poll.count_votes).to eq 'Carol'
     end
   end
 end

@@ -78,6 +78,17 @@ RSpec.describe BordaPoll do
        
       expect(result['Alice']).to eq 3
       expect(result['Bob']).to eq 6
+      
+      poll = BordaPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol'], DateTime.now + 10)
+      poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob', 'Carol']))
+      poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Frank', ['Carol', 'Alice', 'Bob']))
+
+      result = poll.count_votes
+       
+      expect(result['Alice']).to eq 7
+      expect(result['Bob']).to eq 4
+      expect(result['Carol']).to eq 7
     end
   end
 end
