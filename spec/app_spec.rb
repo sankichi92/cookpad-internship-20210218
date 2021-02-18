@@ -1,4 +1,3 @@
-=begin
 require 'sinatra/test_helpers'
 require_relative '../app'
 
@@ -42,8 +41,8 @@ RSpec.describe 'PollApp' do
     end
   end
 
-  xdescribe 'POST /polls/:id/votes' do
-    let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob']) }
+  describe 'POST /polls/:id/votes' do
+    let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob'], DateTime.now() + 10000) }
 
     before do
       $polls = [poll]
@@ -81,4 +80,3 @@ RSpec.describe 'PollApp' do
     end
   end
 end
-=end
