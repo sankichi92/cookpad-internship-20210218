@@ -9,7 +9,7 @@ RSpec.describe 'PollApp' do
     $polls = []
   end
 
-  xdescribe 'GET /' do
+  describe 'GET /' do
     it 'responds 200 OK' do
       get '/'
 

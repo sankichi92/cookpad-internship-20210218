@@ -2,6 +2,10 @@ require_relative 'lib/vote'
 require_relative 'lib/poll'
 require 'sinatra'
 
+get '/' do
+  erb :index, :locals => {:polls => $polls}
+end
+
 post '/polls/:id/votes' do |id|
   voter = params[:voter]
   candidate = params[:candidate]
