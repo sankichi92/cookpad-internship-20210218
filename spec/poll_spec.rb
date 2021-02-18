@@ -20,5 +20,19 @@ RSpec.describe Poll do
       poll.add_vote(vote)
       expect(poll.votes).to eq [vote]
     end
+
+    it 'over deadline' do
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], 2)
+      vote = Vote.new('Nakano', 'Alice', 3)
+      poll.add_vote(vote)
+      expect(poll.votes).to eq []
+    end
+
+    it 'before deadline' do
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], 3)
+      vote = Vote.new('Nakano', 'Alice', 2)
+      poll.add_vote(vote)
+      expect(poll.votes).to eq [vote]
+    end
   end
 end

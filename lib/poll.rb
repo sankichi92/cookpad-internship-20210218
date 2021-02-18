@@ -9,6 +9,8 @@ class Poll
   end
 
   def add_vote(vote)
-    @votes.push(vote)
+    if timelimit == nil || timelimit > vote.time
+      @votes.push(vote)
+    end
   end
 end
