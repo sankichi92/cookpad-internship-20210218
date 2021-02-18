@@ -13,9 +13,6 @@
 
 <h2>新規投票</h2>
 <form action="/polls/<%= index %>/votes" method="post">
-  <label for="voter">あなたの名前</label>
-  <input id="voter" name="voter" type="text">
-
   <% unless polled %>
     <label for="candidate">投票する候補名</label>
     <select name="candidate">

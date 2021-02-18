@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/cookies'
 require 'sinatra/reloader'
 require_relative 'lib/poll'
 require_relative 'lib/vote'
@@ -16,7 +17,30 @@ $draft = Poll.new('タイトル', [])
 
 get '/' do
   '投票一覧'
-  erb :index, locals: { polls: $polls, draft: $draft }
+  if cookies[:username].nil?
+    redirect to('/login'), 303
+  else
+    erb :index, locals: { polls: $polls, draft: $draft }
+  end
+end
+
+get '/login' do
+  erb :login
+end
+
+post '/login' do
+  if params["username"] == ""
+    halt 400, '名前が無記名です'
+    erb :login
+  end
+  cookies[:username] = params["username"]
+    redirect to('/'), 303
+end
+
+def cookies_check
+  if cookies[:username].nil?
+    redirect to('/login'), 303
+  end
 end
 
 post '/' do
@@ -35,7 +59,10 @@ get '/polls/:id' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  erb :poll, locals: { index: index, poll: poll, polled: true }
+  cookies_check
+  polled =  poll.voted?(cookies[:username])
+  p polled
+  erb :poll, locals: { index: index, poll: poll, polled: polled }
 end
 
 get '/polls/:id/result' do
@@ -49,23 +76,28 @@ post '/polls/:id/votes' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  voter = params[:voter]
-  candidate = params[:candidate]
+  voter = cookies[:username]
 
-  begin
-    poll.add_vote(Vote.new(voter, candidate))
-  rescue Poll::InvalidCandidateError
-    halt 400, '無効な投票先です'
-    erb :poll, locals: { index: index, poll: poll }
-  rescue Poll::VoteTimeLimitExceededError
-    halt 400, '投票期限を過ぎています'
-    erb :poll, locals: { index: index, poll: poll }
-  rescue Poll::DuplicatedVoteError
-    halt 400, '二重投票です'
-    erb :poll, locals: { index: index, poll: poll }
-  rescue Vote::EmptyNameError
-    halt 400, '名前が無記名です'
-    erb :poll, locals: { index: index, poll: poll }
+  if poll.voted?(voter)
+    poll.undo(voter)
+  else
+    candidate = params[:candidate]
+
+    begin
+      poll.add_vote(Vote.new(voter, candidate))
+    rescue Poll::InvalidCandidateError
+      halt 400, '無効な投票先です'
+      erb :poll, locals: { index: index, poll: poll }
+    rescue Poll::VoteTimeLimitExceededError
+      halt 400, '投票期限を過ぎています'
+      erb :poll, locals: { index: index, poll: poll }
+    rescue Poll::DuplicatedVoteError
+      halt 400, '二重投票です'
+      erb :poll, locals: { index: index, poll: poll }
+    rescue Vote::EmptyNameError
+      halt 400, '名前が無記名です'
+      erb :poll, locals: { index: index, poll: poll }
+    end
   end
 
   redirect to('/polls/' + index.to_s), 303

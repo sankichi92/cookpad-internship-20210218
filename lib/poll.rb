@@ -9,7 +9,7 @@ class Poll
   class DuplicatedVoteError < StandardError
   end
 
-  attr_reader :title, :candidates, :votes, :timelimit
+  attr_reader :title, :candidates, :votes, :timelimit, :voters
 
   def initialize(title, candidates, timelimit=TimeLimit.new("", ""))
     @title = title
@@ -19,11 +19,22 @@ class Poll
     @voters = []
   end
 
+  def voted?(voter)
+    @voters.include?(voter)
+  end
+
+  def undo(voter)
+    @voters.delete(voter)
+    idx = @votes.find_index { |vote| vote.voter == voter}
+    @votes.delete_at(idx)
+  end
+
+
   def add_vote(vote)
     if timelimit.exceeded(vote.time)
       raise VoteTimeLimitExceededError
     end
-    if @voters.include?(vote.voter)
+    if voted?(vote.voter)
       raise DuplicatedVoteError
     end
     if @candidates.include?(vote.candidate)
