@@ -68,7 +68,9 @@ RSpec.describe BordaPoll do
        
       expect(result['Alice']).to eq 5
       expect(result['Bob']).to eq 4
+    end
 
+    it 'count the votes and returns the result as a hash' do
       poll = BordaPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(RankedVote.new('Carol', ['Bob', 'Alice']))
       poll.add_vote(RankedVote.new('Dave', ['Bob', 'Alice']))
@@ -78,7 +80,9 @@ RSpec.describe BordaPoll do
        
       expect(result['Alice']).to eq 3
       expect(result['Bob']).to eq 6
-      
+    end
+
+    it 'count the votes and returns the result as a hash' do 
       poll = BordaPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol'], DateTime.now + 10)
       poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob', 'Carol']))
       poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Alice', 'Bob']))

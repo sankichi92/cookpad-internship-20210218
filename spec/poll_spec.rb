@@ -62,7 +62,9 @@ RSpec.describe Poll do
        
       expect(result['Alice']).to eq 2
       expect(result['Bob']).to eq 1
+    end
 
+    it 'count the votes and returns the result as a hash' do
       poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(Vote.new('Carol', 'Bob'))
       poll.add_vote(Vote.new('Dave', 'Bob'))
