@@ -8,9 +8,9 @@ $polls = [
   Poll.new('人気投票', ['おむすびけん', 'クックパッドたん']),
 ]
 
-$default_draft = Poll.new('タイトル', ['候補1', '候補2'])
+$default_draft = Poll.new('タイトル', [])
 
-$draft = Poll.new('タイトル', ['候補1', '候補2'])
+$draft = Poll.new('タイトル', [])
 
 get '/' do
   '投票一覧'
