@@ -4,11 +4,12 @@ class Poll
   class MultipleVoteError < StandardError
   end
 
-  attr_reader :title, :candidates, :votes
+  attr_reader :title, :candidates, :votes, :closing
 
-  def initialize(title, candidates)
+  def initialize(title, candidates, closing)
     @title = title
     @candidates = candidates
+    @closing = closing
     @votes = []
   end
 
