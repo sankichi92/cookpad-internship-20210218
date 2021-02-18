@@ -41,7 +41,7 @@ RSpec.describe Poll do
     end
 
     context 'with a vote that is overdue' do
-      it 'raises MultipleVoteError' do
+      it 'raises OverdueVoteError' do
         poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now - 10)
         vote = Vote.new('Miyoshi', 'Alice')
 

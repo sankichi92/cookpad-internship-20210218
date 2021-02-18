@@ -1,7 +1,7 @@
 require_relative '../lib/vote'
 
 RSpec.describe Vote do
-  it 'has a voter and candidates' do
+  it 'has a voter and candidate' do
     vote = Vote.new('Miyoshi', 'Alice')
 
     expect(vote.voter).to eq 'Miyoshi'

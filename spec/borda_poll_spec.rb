@@ -48,7 +48,7 @@ RSpec.describe BordaPoll do
     end
 
     context 'with a vote that is overdue' do
-      it 'raises MultipleVoteError' do
+      it 'raises OverdueVoteError' do
         poll = BordaPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now - 10)
         vote = RankedVote.new('Miyoshi', ['Alice', 'Bob'])
 
