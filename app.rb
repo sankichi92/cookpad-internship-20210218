@@ -36,8 +36,18 @@ post '/polls/:id/votes' do
 
   begin
     poll.add_vote(Vote.new(voter, candidate))
-  rescue => e
+  rescue Poll::InvalidCandidateError
     halt 400, '無効な投票先です'
+    erb :poll, locals: { index: index, poll: poll }
+  rescue Poll::VoteTimeLimitExceededError
+    halt 400, '投票期限を過ぎています'
+    erb :poll, locals: { index: index, poll: poll }
+  rescue Poll::DuplicatedVoteError
+    halt 400, '二重投票です'
+    erb :poll, locals: { index: index, poll: poll }
+  rescue Vote::EmptyNameError
+    halt 400, '名前が無記名です'
+    erb :poll, locals: { index: index, poll: poll }
   end
 
   redirect to('/polls/' + index.to_s), 303

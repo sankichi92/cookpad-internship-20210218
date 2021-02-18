@@ -4,7 +4,7 @@ class Poll
   end
   class VoteTimeLimitExceededError < StandardError
   end
-  class DuplicatedVote < StandardError
+  class DuplicatedVoteError < StandardError
   end
 
   attr_reader :title, :candidates, :votes, :timelimit
@@ -22,7 +22,7 @@ class Poll
       raise VoteTimeLimitExceededError
     end
     if @voters.include?(vote.voter)
-      raise DuplicatedVote
+      raise DuplicatedVoteError
     end
     if @candidates.include?(vote.candidate)
       @voters << vote.voter
