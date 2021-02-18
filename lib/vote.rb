@@ -1,12 +1,14 @@
 class Vote
-  def initialize(voter, candidates) 
+  def initialize(voter, candidate) 
+    @voter = voter
+    @candidate = candidate
   end
 
   def voter
-    'Miyoshi'
+    @voter
   end
 
   def candidate
-    'Alice'
+    @candidate
   end
 end
