@@ -7,4 +7,10 @@ RSpec.describe Vote do
     expect(vote.voter).to eq 'Miyoshi'
     expect(vote.candidate).to eq 'Alice'
   end
+
+  describe Vote do
+    it 'if empty name passed' do
+      expect { Vote.new('', 'Alice') }.to raise_error Vote::EmptyNameError
+    end
+  end
 end
