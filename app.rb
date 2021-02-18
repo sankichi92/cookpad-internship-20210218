@@ -8,9 +8,22 @@ $polls = [
   Poll.new('人気投票', ['おむすびけん', 'クックパッドたん']),
 ]
 
+$default_draft = Poll.new('タイトル', ['候補1', '候補2'])
+
+$draft = Poll.new('タイトル', ['候補1', '候補2'])
+
 get '/' do
   '投票一覧'
-  erb :index, locals: { polls: $polls }
+  erb :index, locals: { polls: $polls, draft: $draft }
+end
+
+post '/' do
+  '投票一覧'
+  title = params["title"]
+  cand_regex = /^cand\d+$/
+  candidates = params.select {|key, value| cand_regex.match(key)}.map { |_, val| val}
+  $polls << Poll.new(title, candidates)
+  erb :index, locals: { polls: $polls, draft: $default_draft }
 end
 
 get '/polls/:id' do
