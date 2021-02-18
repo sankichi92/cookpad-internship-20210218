@@ -26,9 +26,11 @@ class Poll
   end
 
   def count_votes
-    {
-      'Alice' => 2,
-      'Bob' => 1,
-    }
+    votedCandidates = @votes.map {|element| element.candidate }
+    result = Hash.new(0)
+    for candidate in votedCandidates do
+      result[candidate] += 1
+    end
+    result
   end
 end
