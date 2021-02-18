@@ -1,6 +1,8 @@
 require 'sinatra'
 require 'sinatra/cookies'
 require 'sinatra/reloader'
+require 'sinatra/json'
+require 'json'
 require_relative 'lib/poll'
 require_relative 'lib/vote'
 require_relative 'lib/timelimit'
@@ -10,6 +12,11 @@ $polls = [
   Poll.new('好きな料理', ['肉じゃが', '生姜焼き', 'からあげ']),
   Poll.new('人気投票', ['おむすびけん', 'クックパッドたん']),
 ]
+
+$users = {
+}
+
+$sessions = {}
 
 $default_draft = Poll.new('タイトル', [])
 
@@ -25,20 +32,45 @@ get '/' do
 end
 
 get '/login' do
-  erb :login
+  p cookies
+  unless cookies[:username].nil?
+    redirect to('/'), 303
+  else
+    erb :login
+  end
+end
+
+get '/signup' do
+  erb :signup
+end
+
+post '/signup', provides: :json do
+  params = JSON.parse(request.body.read)
+  unless $users[params["user"]].nil?
+    status 406
+  else
+    $users[params["user"]] = [params["pass"], JSON.dump(params["key"])]
+    status 200
+  end
+end
+
+post '/api/user_check', provides: :json do
+  params = JSON.parse request.body.read
+  p params["username"]
+  json :registered => ($users.include?(params["username"]))
 end
 
 post '/login' do
-  if params["username"] == ""
+  if params["username"].nil?
     halt 400, '名前が無記名です'
     erb :login
   end
   cookies[:username] = params["username"]
-    redirect to('/'), 303
 end
 
 get '/logout' do
-  cookies[:username] = nil
+  session.clear
+  cookies.clear
   redirect to('/login'), 303
 end
 
