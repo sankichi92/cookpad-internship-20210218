@@ -35,14 +35,44 @@ class CondorcetPoll
 
   def count_votes
     votedCandidates = @votes.map {|element| element.candidates }
-    scoreHashMap = Hash.new(0)
+
+    # calc score max candidates
+    scores = Hash.new(0)
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate, i|
-        scoreHashMap[candidate] +=  candidates.length - i
+        scores[candidate] +=  candidates.length - i
+      end
+    end
+    
+    scoreRanking = scores.sort {|lhs, rhs| lhs[1]<=>rhs[1]}.reverse
+    highScore = scoreRanking[0][1]
+    highScoreCandidates = scoreRanking.select {|candidate| candidate[1] == highScore}
+                                  .map {|element| element[0]}
+
+    if highScoreCandidates.length == 1 then
+      return highScoreCandidates
+    end
+
+    # calc win max candidates in score max candidates
+    wins = Hash.new{|hash, key| hash[key] = Hash.new(0) }
+    
+    votedCandidates.each do |rankedCandidates|
+      rankedCandidates.each_with_index do |candidate1, i|
+        rankedCandidates.each_with_index do |candidate2, j|
+          if i < j then
+            wins[candidate1][candidate2] += 1
+            wins[candidate2][candidate1] -= 1
+          elsif i > j then
+            wins[candidate1][candidate2] -= 1
+            wins[candidate2][candidate1] += 1
+          end
+        end
       end
     end
 
-    ranking = scoreHashMap.sort {|lhs, rhs| lhs[1]<=>rhs[1]}.reverse
-    ranking[0][0]
+    highScoreCandidates.permutation(2)
+                        .select {|pair| wins[pair[0]][pair[1]] > 0 }
+                        .map {|pair| pair[0]}
+                        #.map {|pair| [pair[0], pair[1], wins[pair[0]][pair[1]]]}
   end
 end

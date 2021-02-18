@@ -58,27 +58,42 @@ RSpec.describe CondorcetPoll do
   end
 
   describe '#count_votes' do
-    it 'count the votes and returns the result as a hash' do
+    it 'count the votes and returns the result as a winner array' do
       poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(RankedVote.new('Carol', ['Alice', 'Bob']))
       poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob']))
       poll.add_vote(RankedVote.new('Ellen', ['Bob', 'Alice']))
 
-      expect(poll.count_votes).to eq 'Alice'
+      expect(poll.count_votes).to eq ['Alice']
+    end
       
+    it 'count the votes and returns the result as a winner array' do
       poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(RankedVote.new('Carol', ['Bob', 'Alice']))
       poll.add_vote(RankedVote.new('Dave', ['Bob', 'Alice']))
       poll.add_vote(RankedVote.new('Ellen', ['Bob', 'Alice']))
 
-      expect(poll.count_votes).to eq 'Bob'
-
+      expect(poll.count_votes).to eq ['Bob']
+    end
+      
+    it 'count the votes and returns the result as a winner array' do
       poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol'], DateTime.now + 10)
-      poll.add_vote(RankedVote.new('Carol', ['Alice', 'Carol', 'Carol']))
-      poll.add_vote(RankedVote.new('Dave', ['Bob', 'Alice', 'Alice']))
-      poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Bob', 'Bob']))
+      poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob', 'Carol']))
+      poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Frank', ['Carol', 'Alice', 'Bob']))
 
-      expect(poll.count_votes).to eq 'Carol'
+      expect(poll.count_votes).to eq ['Carol']
+    end
+      
+    it 'count the votes and returns the result as a winner array' do
+      poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol'], DateTime.now + 10)
+      poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob', 'Carol']))
+      poll.add_vote(RankedVote.new('Ellen', ['Carol', 'Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Frank', ['Bob', 'Carol', 'Alice']))
+
+      expect(poll.count_votes).to include 'Alice'
+      expect(poll.count_votes).to include 'Bob'
+      expect(poll.count_votes).to include 'Carol'
     end
   end
 end
