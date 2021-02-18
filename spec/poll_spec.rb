@@ -12,4 +12,13 @@ RSpec.describe Poll do
     expect(poll.title).to eq 'Awesome Poll'
     expect(poll.candidates).to eq ['Alice', 'Charry']
   end
+
+  describe "#add_vote" do
+    it 'saves the given vote' do
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'])
+      vote = Vote.new('Nakano', 'Alice')
+      poll.add_vote(vote)
+      expect(poll.votes).to eq [vote]
+    end
+  end
 end
