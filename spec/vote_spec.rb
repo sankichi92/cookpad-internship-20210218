@@ -16,7 +16,7 @@ RSpec.describe Vote do
 
       poll.add_vote(vote)
 
-      expect(poll.votes).to eq [vote]
+      expect(poll.votes).to include vote
     end
   end
 
