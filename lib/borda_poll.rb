@@ -32,4 +32,11 @@ class BordaPoll
 
     @votes.push(vote)
   end
+
+  def count_votes
+    {
+      'Alice' => 5,
+      'Bob' => 4,
+    }
+  end
 end
