@@ -12,7 +12,7 @@ RSpec.describe Vote do
   describe '#add_vote' do
     it 'saves the given vote' do
       poll = Poll.new('Awesome Poll', ['Alice', 'Bob'])
-      vote = Vote.new('Miyoshi', 'Alcie')
+      vote = Vote.new('Miyoshi', 'Alice')
 
       poll.add_vote(vote)
 
