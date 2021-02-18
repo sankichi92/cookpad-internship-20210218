@@ -13,7 +13,7 @@ RSpec.describe Poll do
   
   describe '#add_vote' do
     it 'saves the given vote' do
-      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now)
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       vote = Vote.new('Miyoshi', 'Alice')
 
       poll.add_vote(vote)
@@ -23,7 +23,7 @@ RSpec.describe Poll do
 
     context 'with a vote that has an invalid candidate' do
       it 'raises InvalidCandidateError' do
-        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now)
+        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
         vote = Vote.new('Miyoshi', 'INVALID')
 
         expect { poll.add_vote(vote) }.to raise_error Poll::InvalidCandidateError
@@ -32,11 +32,20 @@ RSpec.describe Poll do
 
     context 'with a vote that has an invalid voter' do
       it 'raises MultipleVoteError' do
-        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now)
+        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
         vote = Vote.new('Miyoshi', 'Alice')
 
         poll.add_vote(vote)
         expect { poll.add_vote(vote) }.to raise_error Poll::MultipleVoteError
+      end
+    end
+
+    context 'with a vote that is overdue' do
+      it 'raises MultipleVoteError' do
+        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now - 10)
+        vote = Vote.new('Miyoshi', 'Alice')
+
+        expect { poll.add_vote(vote) }.to raise_error Poll::OverdueVoteError
       end
     end
   end
@@ -44,7 +53,7 @@ RSpec.describe Poll do
 
   describe '#count_votes' do
     it 'count the votes and returns the result as a hash' do
-      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now)
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(Vote.new('Carol', 'Alice'))
       poll.add_vote(Vote.new('Dave', 'Alice'))
       poll.add_vote(Vote.new('Ellen', 'Bob'))
@@ -54,7 +63,7 @@ RSpec.describe Poll do
       expect(result['Alice']).to eq 2
       expect(result['Bob']).to eq 1
 
-      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now)
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
       poll.add_vote(Vote.new('Carol', 'Bob'))
       poll.add_vote(Vote.new('Dave', 'Bob'))
       poll.add_vote(Vote.new('Ellen', 'Bob'))

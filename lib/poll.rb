@@ -3,6 +3,8 @@ class Poll
   end
   class MultipleVoteError < StandardError
   end
+  class OverdueVoteError < StandardError
+  end
 
   attr_reader :title, :candidates, :votes, :closing
 
@@ -20,6 +22,10 @@ class Poll
 
     if @votes.map {|element| element.voter }.include?(vote.voter) then
       raise MultipleVoteError.new(vote)
+    end
+
+    if DateTime.now() > closing then
+      raise OverdueVoteError.new(closing)
     end
 
     @votes.push(vote)
