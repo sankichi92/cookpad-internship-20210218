@@ -17,8 +17,8 @@ RSpec.describe 'PollApp' do
     end
   end
 
-  xdescribe 'GET /polls/:id' do
-    let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob']) }
+  describe 'GET /polls/:id' do
+    let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob'], DateTime.now() + 10000) }
 
     before do
       $polls = [poll]
