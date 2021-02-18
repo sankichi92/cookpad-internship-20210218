@@ -35,7 +35,7 @@ get '/polls/:id' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  erb :poll, locals: { index: index, poll: poll }
+  erb :poll, locals: { index: index, poll: poll, polled: true }
 end
 
 get '/polls/:id/result' do
