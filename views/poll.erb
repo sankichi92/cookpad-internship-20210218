@@ -17,7 +17,11 @@
   <input id="voter" name="voter" type="text">
 
   <label for="candidate">投票する候補名</label>
-  <input id="candidate" name="candidate" type="text">
+  <select name="candidate">
+    <% poll.candidates.each do |cand| %>
+      <option value="<%=cand%>" name="candidate" type="text"><%=cand%></option>
+    <% end %>
+  </select>
 
   <input type="submit" value="投票する">
 </form>
