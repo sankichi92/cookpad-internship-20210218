@@ -1,12 +1,14 @@
 class Poll
   def initialize(title, candidates)
+    @title = title
+    @candidates = candidates
   end
 
   def title
-    'Awesome Poll'
+    @title
   end
   
   def candidates
-    ['Alice', 'Bob']
+    @candidates
   end
 end
