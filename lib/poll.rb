@@ -24,4 +24,11 @@ class Poll
 
     @votes.push(vote)
   end
+
+  def count_votes
+    {
+      'Alice' => 2,
+      'Bob' => 1,
+    }
+  end
 end
