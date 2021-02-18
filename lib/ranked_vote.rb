@@ -1,7 +1,7 @@
 require 'date'
 
 class RankedVote
-  attr_reader :voter, :candidates
+  attr_reader :voter, :candidates, :time
 
   class EmptyNameError < StandardError
   end
@@ -12,5 +12,6 @@ class RankedVote
     end
     @voter = voter
     @candidates = candidates
+    @time = Time.now
   end
 end
