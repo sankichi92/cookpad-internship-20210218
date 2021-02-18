@@ -20,8 +20,4 @@ RSpec.describe TimeLimit do
     limit = TimeLimit.new("", "")
     expect(limit.time).to eq nil
   end
-
-  it 'exceeded' do
-    expect  { limit = TimeLimit.new("1945-8-5", "") }.to raise_error TimeLimit::AlreadyExceeded
-  end
 end

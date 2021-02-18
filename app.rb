@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require_relative 'lib/poll'
 require_relative 'lib/vote'
+require_relative 'lib/timelimit'
 require 'time'
 
 $polls = [
@@ -23,10 +24,9 @@ post '/' do
   title = params["title"]
   cand_regex = /^cand\d+$/
   candidates = params.select {|key, value| cand_regex.match(key)}.map { |_, val| val}
+  timelimit = TimeLimit.new(params["date"], params["time"])
 
-
-
-  $polls << Poll.new(title, candidates)
+  $polls << Poll.new(title, candidates, timelimit)
   p params
   erb :index, locals: { polls: $polls, draft: $default_draft }
 end

@@ -1,8 +1,5 @@
 class TimeLimit
 
-  class AlreadyExceeded < StandardError
-  end
-
   attr_reader :time
 
   @time
@@ -17,8 +14,13 @@ class TimeLimit
       now = Time.now
       @time = Time.parse("#{now.year}-#{now.month}-#{now.day} " + time)
     end
-    if @time != nil && @time < Time.now
-      raise AlreadyExceeded
+  end
+
+  def exceeded(time)
+    if @time == nil
+      false
+    else
+      @time < time
     end
   end
 end

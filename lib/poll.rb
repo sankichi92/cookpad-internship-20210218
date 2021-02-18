@@ -1,3 +1,5 @@
+require_relative 'timelimit'
+
 class Poll
 
   class InvalidCandidateError < StandardError
@@ -9,7 +11,7 @@ class Poll
 
   attr_reader :title, :candidates, :votes, :timelimit
 
-  def initialize(title, candidates, timelimit=nil)
+  def initialize(title, candidates, timelimit=TimeLimit.new("", ""))
     @title = title
     @candidates = candidates
     @votes = []
@@ -18,7 +20,7 @@ class Poll
   end
 
   def add_vote(vote)
-    if timelimit != nil && timelimit < vote.time
+    if timelimit.exceeded(vote.time)
       raise VoteTimeLimitExceededError
     end
     if @voters.include?(vote.voter)

@@ -31,15 +31,15 @@ RSpec.describe Poll do
     end
 
     it 'over deadline' do
-      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], 2)
-      vote = Vote.new('Nakano', 'Alice', 3)
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], TimeLimit.new("1999-11-12", ""))
+      vote = Vote.new('Nakano', 'Alice')
       expect { poll.add_vote(vote) }.to raise_error Poll::VoteTimeLimitExceededError
       expect(poll.votes).to eq []
     end
 
     it 'before deadline' do
-      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], 3)
-      vote = Vote.new('Nakano', 'Alice', 2)
+      poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], TimeLimit.new("2222-12-31", ""))
+      vote = Vote.new('Nakano', 'Alice')
       poll.add_vote(vote)
       expect(poll.votes).to eq [vote]
     end
