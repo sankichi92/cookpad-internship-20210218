@@ -23,15 +23,16 @@ class CondorcetPoll
   end
 
 
+  # 計算量の改善が出来そう
   def winner
-    loosers = @store.candidates.map{|cand| [cand, false] }.to_h
+    loosers = @store.candidates.map { |cand| [cand, false] }.to_h
     @store.candidates.combination(2).each do |cand1, cand2|
-      looser1on1(cand1, cand2, @store.votes.map {|vote| vote.candidates }).each do |looser|
+      looser1on1(cand1, cand2, @store.votes.map { |vote| vote.candidates }).each do |looser|
         loosers[looser] = true
       end
     end
-    loosers.each do |cand, loose| 
-      if not loose
+    loosers.each do |cand, loose|
+      unless loose
         return cand
       end
     end
@@ -44,9 +45,9 @@ def looser1on1(cand1, cand2, votes)
   win2 = 0
   votes.each do |vote|
     if vote.find_index(cand1) < vote.find_index(cand2)
-      win1+=1
+      win1 += 1
     else
-      win2+=1
+      win2 += 1
     end
   end
   if win1 == win2

@@ -23,7 +23,7 @@ post '/' do
   '投票一覧'
   title = params["title"]
   cand_regex = /^cand\d+$/
-  candidates = params.select {|key, value| cand_regex.match(key)}.map { |_, val| val}
+  candidates = params.select { |key, value| cand_regex.match(key) }.map { |_, val| val }
   timelimit = TimeLimit.new(params["date"], params["time"])
 
   $polls << Poll.new(title, candidates, timelimit)
@@ -70,5 +70,3 @@ post '/polls/:id/votes' do
 
   redirect to('/polls/' + index.to_s), 303
 end
-
-

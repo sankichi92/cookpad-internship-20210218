@@ -87,7 +87,7 @@ RSpec.describe 'BordaPoll' do
     it 'raise error when same actor votes again' do
       poll = BordaPoll.new('Awesome Poll', %w[Alice Bob])
       poll.add_vote(RankedVote.new('Dave', %w[Bob Alice]))
-      expect{ poll.add_vote(RankedVote.new('Dave', %w[Alice Bob])) }.to raise_error MultiPollValidator::DuplicatedVoteError
+      expect { poll.add_vote(RankedVote.new('Dave', %w[Alice Bob])) }.to raise_error MultiPollValidator::DuplicatedVoteError
     end
   end
 end

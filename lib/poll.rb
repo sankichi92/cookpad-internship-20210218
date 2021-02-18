@@ -36,7 +36,7 @@ class Poll
 
   def count_votes()
     ret = {}
-    @candidates.each do |cand| 
+    @candidates.each do |cand|
       ret[cand] = 0
     end
     votes.each do |vote|

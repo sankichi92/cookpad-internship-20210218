@@ -24,13 +24,13 @@ class BordaPoll
 
   def count_votes()
     ret = {}
-    @store.candidates.each do |cand| 
+    @store.candidates.each do |cand|
       ret[cand] = 0
     end
 
     votes.each do |vote|
       score = @store.candidates.size
-      vote.candidates.each do |candidate| 
+      vote.candidates.each do |candidate|
         ret[candidate] += score
         score -= 1
       end
