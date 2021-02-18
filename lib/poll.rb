@@ -16,7 +16,7 @@ class Poll
     if timelimit == nil || timelimit > vote.time
       @votes << vote
     end
-    if not @candidates.include?(vote.candidate)
+    unless @candidates.include?(vote.candidate)
       raise InvalidCandidateError
     end
   end
