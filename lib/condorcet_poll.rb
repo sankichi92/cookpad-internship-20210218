@@ -70,8 +70,15 @@ class CondorcetPoll
       end
     end
 
-    highScoreCandidates.permutation(2)
-                        .select {|pair| wins[pair[0]][pair[1]] > 0 }
-                        .map {|pair| pair[0]}
+    result = highScoreCandidates
+    loop do
+        newResult = result.permutation(2)
+                          .select {|pair| wins[pair[0]][pair[1]] > 0 }
+                          .map {|pair| pair[0]}
+                          .uniq
+        break if newResult.length == 0 || newResult.length ==result.length
+        result = newResult
+    end
+    result
   end
 end
