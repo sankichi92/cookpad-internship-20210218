@@ -56,4 +56,15 @@ RSpec.describe CondorcetPoll do
       end
     end
   end
+
+  describe '#count_votes' do
+    it 'count the votes and returns the result as a hash' do
+      poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
+      poll.add_vote(RankedVote.new('Carol', ['Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Dave', ['Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Ellen', ['Bob', 'Alice']))
+
+      expect(poll.count_votes).to eq 'Alice'
+    end
+  end
 end

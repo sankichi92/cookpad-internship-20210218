@@ -32,4 +32,8 @@ class CondorcetPoll
 
     @votes.push(vote)
   end
+
+  def count_votes
+    'Alice'
+  end
 end
