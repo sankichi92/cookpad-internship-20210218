@@ -1,4 +1,4 @@
-class BordaPoll
+class MultiPollValidator
   class InvalidCandidateError < StandardError
   end
   class VoteTimeLimitExceededError < StandardError

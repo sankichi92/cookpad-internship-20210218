@@ -1,5 +1,5 @@
 require_relative '../lib/ranked_vote'
-require_relative '../lib/borda_poll'
+require_relative '../lib/multipoll_validator'
 
 RSpec.describe 'MultiPollValidator' do
   it 'has a title and candidates' do

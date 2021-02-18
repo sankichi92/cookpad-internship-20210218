@@ -1,47 +1,35 @@
 require_relative 'timelimit'
+require_relative 'multipoll_validator'
 
 class BordaPoll
-
-  class InvalidCandidateError < StandardError
-  end
-  class VoteTimeLimitExceededError < StandardError
-  end
-  class DuplicatedVoteError < StandardError
+  def title
+    @store.title
   end
 
-  attr_reader :title, :candidates, :votes, :timelimit
-
-  def initialize(title, candidates, timelimit=TimeLimit.new("", ""))
-    @title = title
-    @candidates = candidates.sort
-    @votes = []
-    @timelimit = timelimit
-    @voters = []
+  def candidates
+    @store.candidates
   end
 
   def add_vote(vote)
-    if timelimit.exceeded(vote.time)
-      raise VoteTimeLimitExceededError
-    end
-    if @voters.include?(vote.voter)
-      raise DuplicatedVoteError
-    end
-    vote_canditates = vote.candidates.dup.sort
-    if @candidates != vote_canditates
-      raise InvalidCandidateError
-    end
-    @votes << vote
-    @voters << vote.voter
+    @store.add_vote(vote)
+  end
+
+  def votes
+    @store.votes
+  end
+
+  def initialize(title, candidates, timelimit=TimeLimit.new("", ""))
+    @store = MultiPollValidator.new(title, candidates, timelimit)
   end
 
   def count_votes()
     ret = {}
-    @candidates.each do |cand| 
+    @store.candidates.each do |cand| 
       ret[cand] = 0
     end
 
     votes.each do |vote|
-      score = @candidates.size
+      score = @store.candidates.size
       vote.candidates.each do |candidate| 
         ret[candidate] += score
         score -= 1

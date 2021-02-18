@@ -33,7 +33,7 @@ RSpec.describe 'BordaPoll' do
         poll = BordaPoll.new('Awesome Poll', %w[Alice Bob])
         vote = RankedVote.new('Nakano', ['INVALID'])
 
-        expect { poll.add_vote(vote) }.to raise_error BordaPoll::InvalidCandidateError
+        expect { poll.add_vote(vote) }.to raise_error MultiPollValidator::InvalidCandidateError
       end
     end
 
@@ -42,7 +42,7 @@ RSpec.describe 'BordaPoll' do
         poll = BordaPoll.new('Awesome Poll', %w[Alice Bob])
         vote = RankedVote.new('Nakano', ['Alice', 'Alice'])
 
-        expect { poll.add_vote(vote) }.to raise_error BordaPoll::InvalidCandidateError
+        expect { poll.add_vote(vote) }.to raise_error MultiPollValidator::InvalidCandidateError
       end
     end
 
@@ -51,14 +51,14 @@ RSpec.describe 'BordaPoll' do
         poll = BordaPoll.new('Awesome Poll', %w[Alice Bob])
         vote = RankedVote.new('Nakano', ['Alice'])
 
-        expect { poll.add_vote(vote) }.to raise_error BordaPoll::InvalidCandidateError
+        expect { poll.add_vote(vote) }.to raise_error MultiPollValidator::InvalidCandidateError
       end
     end
 
     it 'over deadline' do
       poll = BordaPoll.new('Awesome BordaPoll', ['Alice', 'Bob'], TimeLimit.new("1999-11-12", ""))
       vote = RankedVote.new('Nakano', %w[Alice Bob])
-      expect { poll.add_vote(vote) }.to raise_error BordaPoll::VoteTimeLimitExceededError
+      expect { poll.add_vote(vote) }.to raise_error MultiPollValidator::VoteTimeLimitExceededError
       expect(poll.votes).to eq []
     end
 
@@ -87,7 +87,7 @@ RSpec.describe 'BordaPoll' do
     it 'raise error when same actor votes again' do
       poll = BordaPoll.new('Awesome Poll', %w[Alice Bob])
       poll.add_vote(RankedVote.new('Dave', %w[Bob Alice]))
-      expect{ poll.add_vote(RankedVote.new('Dave', %w[Alice Bob])) }.to raise_error BordaPoll::DuplicatedVoteError
+      expect{ poll.add_vote(RankedVote.new('Dave', %w[Alice Bob])) }.to raise_error MultiPollValidator::DuplicatedVoteError
     end
   end
 end
