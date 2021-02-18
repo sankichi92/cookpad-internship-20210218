@@ -20,6 +20,13 @@ get '/polls/:id' do
   erb :poll, locals: { index: index, poll: poll }
 end
 
+get '/polls/:id/result' do
+  index = params['id'].to_i
+  poll = $polls[index]
+  halt 404, '投票が見つかりませんでした' if poll.nil?
+  erb :result, locals: { index: index, title: poll.title, result: poll.count_votes }
+end
+
 post '/polls/:id/votes' do
   index = params['id'].to_i
   poll = $polls[index]
@@ -35,4 +42,5 @@ post '/polls/:id/votes' do
 
   redirect to('/polls/' + index.to_s), 303
 end
+
 

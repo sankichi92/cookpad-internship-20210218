@@ -41,6 +41,31 @@ RSpec.describe 'PollApp' do
     end
   end
 
+  describe 'GET /polls/:id/result' do
+    let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob']) }
+
+    before do
+      poll.add_vote(Vote.new('Nakano', 'Alice'))
+      $polls = [poll]
+    end
+
+    context 'with valid id' do
+      it 'responds 200 OK' do
+        get '/polls/0'
+
+        expect(last_response.status).to eq 200
+      end
+    end
+
+    context 'with invalid id' do
+      it 'responds 404 Not Found' do
+        get '/polls/1'
+
+        expect(last_response.status).to eq 404
+      end
+    end
+  end
+
   describe 'POST /polls/:id/votes' do
     let(:poll) { Poll.new('Example Poll', ['Alice', 'Bob']) }
 
