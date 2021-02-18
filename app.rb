@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require_relative 'lib/poll'
 require_relative 'lib/vote'
+require 'time'
 
 $polls = [
   Poll.new('好きな料理', ['肉じゃが', '生姜焼き', 'からあげ']),
@@ -22,7 +23,11 @@ post '/' do
   title = params["title"]
   cand_regex = /^cand\d+$/
   candidates = params.select {|key, value| cand_regex.match(key)}.map { |_, val| val}
+
+
+
   $polls << Poll.new(title, candidates)
+  p params
   erb :index, locals: { polls: $polls, draft: $default_draft }
 end
 
