@@ -28,6 +28,13 @@ RSpec.describe BordaPoll do
 
         expect { poll.add_vote(vote) }.to raise_error BordaPoll::InvalidCandidateError
       end
+
+      it 'raises InvalidCandidateError' do
+        poll = BordaPoll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
+        vote = RankedVote.new('Miyoshi', ['Bob', 'Bob'])
+
+        expect { poll.add_vote(vote) }.to raise_error BordaPoll::InvalidCandidateError
+      end
     end
 
     context 'with a vote that has an invalid voter' do
