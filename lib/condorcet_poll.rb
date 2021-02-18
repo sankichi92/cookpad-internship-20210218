@@ -73,6 +73,5 @@ class CondorcetPoll
     highScoreCandidates.permutation(2)
                         .select {|pair| wins[pair[0]][pair[1]] > 0 }
                         .map {|pair| pair[0]}
-                        #.map {|pair| [pair[0], pair[1], wins[pair[0]][pair[1]]]}
   end
 end

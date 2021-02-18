@@ -94,6 +94,22 @@ RSpec.describe CondorcetPoll do
       expect(poll.count_votes).to include 'Alice'
       expect(poll.count_votes).to include 'Bob'
       expect(poll.count_votes).to include 'Carol'
+      expect(poll.count_votes.length).to eq 3
+    end
+
+    it 'count the votes and returns the result as a winner array' do
+      poll = CondorcetPoll.new('Awesome Poll', ['Alice', 'Bob', 'Carol', 'Dave', 'Flank'], DateTime.now + 10)
+      poll.add_vote(RankedVote.new('Flank', ['Alice', 'Bob', 'Carol', 'Dave', 'Flank']))
+      poll.add_vote(RankedVote.new('George', ['Carol', 'Alice', 'Bob', 'Flank', 'Dave']))
+      poll.add_vote(RankedVote.new('Henry', ['Bob', 'Carol', 'Alice', 'Dave', 'Flank']))
+      poll.add_vote(RankedVote.new('Ivan', ['Flank', 'Dave', 'Alice', 'Bob', 'Carol']))
+      poll.add_vote(RankedVote.new('Justin', ['Dave', 'Flank', 'Carol', 'Alice', 'Bob']))
+      poll.add_vote(RankedVote.new('Kacy', ['Flank', 'Dave', 'Bob', 'Carol', 'Alice']))
+
+      expect(poll.count_votes).to include 'Alice'
+      expect(poll.count_votes).to include 'Bob'
+      expect(poll.count_votes).to include 'Carol'
+      expect(poll.count_votes.length).to eq 3
     end
   end
 end
