@@ -37,6 +37,11 @@ post '/login' do
     redirect to('/'), 303
 end
 
+get '/logout' do
+  cookies[:username] = nil
+  redirect to('/login'), 303
+end
+
 def cookies_check
   if cookies[:username].nil?
     redirect to('/login'), 303
