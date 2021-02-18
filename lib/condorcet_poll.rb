@@ -34,6 +34,15 @@ class CondorcetPoll
   end
 
   def count_votes
-    'Alice'
+    votedCandidates = @votes.map {|element| element.candidates }
+    scoreHashMap = Hash.new(0)
+    votedCandidates.each do |rankedCandidates|
+      rankedCandidates.each_with_index do |candidate, i|
+        scoreHashMap[candidate] +=  candidates.length - i
+      end
+    end
+
+    ranking = scoreHashMap.sort {|lhs, rhs| lhs[1]<=>rhs[1]}.reverse
+    ranking[0][0]
   end
 end
