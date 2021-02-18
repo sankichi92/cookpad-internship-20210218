@@ -1,0 +1,6 @@
+<h1><%= poll.title %>の結果</h1>
+<ol>
+  <% result.each do |candidate, vote_count| %>
+    <li><%= candidate %>（<%= vote_count %>票）</li>
+  <% end %>
+</ol>
