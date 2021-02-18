@@ -23,12 +23,11 @@ class Poll
 
   def count_votes()
     ret = {}
+    @candidates.each do |cand| 
+      ret[cand] = 0
+    end
     votes.each do |vote|
-      if ret.include?(vote.candidate)
-        ret[vote.candidate] += 1
-      elsif
-        ret[vote.candidate] = 1
-      end
+      ret[vote.candidate] += 1
     end
     ret
   end
