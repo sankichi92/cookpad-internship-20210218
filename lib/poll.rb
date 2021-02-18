@@ -4,6 +4,8 @@ class Poll
   end
   class VoteTimeLimitExceededError < StandardError
   end
+  class DuplicatedVote < StandardError
+  end
 
   attr_reader :title, :candidates, :votes, :timelimit
 
@@ -12,13 +14,18 @@ class Poll
     @candidates = candidates
     @votes = []
     @timelimit = timelimit
+    @voters = []
   end
 
   def add_vote(vote)
     if timelimit != nil && timelimit < vote.time
       raise VoteTimeLimitExceededError
     end
+    if @voters.include?(vote.voter)
+      raise DuplicatedVote
+    end
     if @candidates.include?(vote.candidate)
+      @voters << vote.voter
       @votes << vote
     elsif
       raise InvalidCandidateError

@@ -66,5 +66,11 @@ RSpec.describe Poll do
       expect(result['Alice']).to eq 0
       expect(result['Bob']).to eq 2
     end
+
+    it 'raise error when same actor votes again' do
+      poll = Poll.new('Awesome Poll', %w[Alice Bob])
+      poll.add_vote(Vote.new('Dave', 'Bob'))
+      expect { poll.add_vote(Vote.new('Dave', 'Alice')) }.to raise_error Poll::DuplicatedVote
+    end
   end
 end
