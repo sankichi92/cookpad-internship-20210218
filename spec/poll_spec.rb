@@ -27,5 +27,15 @@ RSpec.describe Poll do
         expect { poll.add_vote(vote) }.to raise_error Poll::InvalidCandidateError
       end
     end
+
+    context 'with a vote that has an invalid voter' do
+      it 'raises MultipleVoteError' do
+        poll = Poll.new('Awesome Poll', ['Alice', 'Bob'])
+        vote = Vote.new('Miyoshi', 'Alice')
+
+        poll.add_vote(vote)
+        expect { poll.add_vote(vote) }.to raise_error Poll::MultipleVoteError
+      end
+    end
   end
 end
