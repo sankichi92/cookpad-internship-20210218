@@ -130,3 +130,56 @@ export function hmac_pass(
       .catch(reject);
   });
 }
+
+let login_pass = "";
+let login_username = "";
+
+const login_btn = document.getElementById("login-confirm");
+if (login_btn instanceof HTMLButtonElement) {
+  login_btn.disabled = true;
+}
+
+function check_loginable() {
+  return login_username.length > 0 && login_pass.length > 7;
+}
+
+document.getElementById("login-username")?.addEventListener("input", (e) => {
+  const { target } = e;
+  if (target instanceof HTMLInputElement) {
+    login_username = target.value;
+  }
+  if (login_btn instanceof HTMLButtonElement) {
+    login_btn.disabled = !check_loginable();
+  }
+});
+
+document.getElementById("login-password")?.addEventListener("input", (e) => {
+  const { target } = e;
+  if (target instanceof HTMLInputElement) {
+    login_pass = target.value;
+  }
+  if (login_btn instanceof HTMLButtonElement) {
+    login_btn.disabled = !check_loginable();
+  }
+});
+
+login_btn?.addEventListener("click", () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "localhost:4567/api/challenge_token");
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.addEventListener("load", () => {
+    if (xhr.responseType == "json") {
+      const token : string = xhr.response.token;
+      const key : JsonWebKey = xhr.response.key;
+      hmac_pass(login_pass, key, token).then(res => {
+        xhr.open("POST", "localhost:4567/api/login");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({user: login_username, token: res}));
+        xhr.addEventListener("load", () => {
+          window.location.href = "/";
+        });
+      });
+    }
+  });
+  xhr.send(JSON.stringify({user: login_username}));
+});
