@@ -8,6 +8,15 @@ export function buf2str(buf: ArrayBuffer): string {
   return Array.prototype.map.call(view, byte => ("00" + byte.toString(16)).slice(-2)).join("")
 }
 
+export function str2buf(s: string): ArrayBuffer {
+  if (s.length % 2 != 0) throw new Error("hash string has odd length");
+  const buf = new Uint8Array(s.length / 2);
+  for (let i = 0; i < s.length/2; ++i) {
+    buf[i] = parseInt(s.slice(i*2, i*2+2), 16);
+  }
+  return buf.buffer
+}
+
 export function generate_salt_and_encrypted_pass(password: string): Promise<KeyPair> {
   const encode = new TextEncoder();
   const raw_pass = encode.encode(password);
