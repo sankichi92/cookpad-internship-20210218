@@ -1,5 +1,6 @@
 require 'sinatra/test_helpers'
 require_relative '../app'
+require 'rack'
 
 RSpec.describe 'PollApp' do
   include Sinatra::TestHelpers
@@ -75,32 +76,39 @@ RSpec.describe 'PollApp' do
 
     context 'with valid id and params' do
       it 'adds a vote and redirects to /polls/:id' do
+        browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
+        browser.post '/login', { username: 'Miyoshi' }
+        res = nil
         expect {
-          post '/polls/0/votes', { voter: 'Miyoshi', candidate: 'Alice' }
+          res = browser.post '/polls/0/votes', { candidate: 'Alice' }
         }.to change { poll.votes.size }.by(1)
-
-        expect(last_response.status).to eq 303
-        expect(last_response.headers['Location']).to match %r{/polls/0$}
+        expect(res.status).to eq 303
+        expect(res.original_headers['Location']).to match %r{/polls/0$}
       end
     end
 
     context 'with invalid id' do
+      browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
       it 'responds 404 Not Found' do
+        browser.post '/login', { username: 'Miyoshi' }
+        res = nil
         expect {
-          post '/polls/1/votes', { voter: 'Miyoshi', candidate: 'Alice' }
+          res = browser.post '/polls/1/votes', { candidate: 'Alice' }
         }.not_to change { poll.votes.size }
-
-        expect(last_response.status).to eq 404
+        expect(res.status).to eq 404
       end
     end
 
     context 'with invalid params' do
+      browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
       it 'responds 400 Bad Request' do
+        browser.post '/login', { username: 'Miyoshi' }
+        res = nil
         expect {
-          post '/polls/0/votes', { voter: 'Miyoshi', candidate: 'INVALID' }
+          res = browser.post '/polls/0/votes', { voter: 'Miyoshi', candidate: 'INVALID' }
         }.not_to change { poll.votes.size }
 
-        expect(last_response.status).to eq 400
+        expect(res.status).to eq 400
       end
     end
   end

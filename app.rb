@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'sinatra/cookies'
 require 'sinatra/reloader'
 require 'sinatra/json'
 require 'json'
@@ -7,6 +6,8 @@ require_relative 'lib/poll'
 require_relative 'lib/vote'
 require_relative 'lib/timelimit'
 require 'time'
+
+enable :sessions
 
 $polls = [
   Poll.new('好きな料理', ['肉じゃが', '生姜焼き', 'からあげ']),
@@ -24,7 +25,7 @@ $draft = Poll.new('タイトル', [])
 
 get '/' do
   '投票一覧'
-  if cookies[:username] == "" || cookies[:username].nil?
+  if session[:username] == "" || session[:username].nil?
     logined = false
   else
     logined = true
@@ -36,12 +37,21 @@ get '/login' do
   erb :login
 end
 
+post '/login' do
+  if params["username"].nil? || params["username"].size == 0
+    erb :login
+  else
+    session[:username] = params["username"]
+    erb :index, locals: { polls: $polls, draft: $draft, logined: true }
+  end
+end
+
 get '/signup' do
   erb :signup
 end
 
 get '/logout' do
-  cookies[:username] = ""
+  session[:username] = ""
   redirect to('/'), 303
 end
 
@@ -52,7 +62,7 @@ post '/' do
   candidates = params.select { |key, value| cand_regex.match(key) }.map { |_, val| val }
   halt 400, '候補は2つ以上必要です' if candidates.size < 2
   timelimit = TimeLimit.new(params["date"], params["time"])
-  if cookies[:username] == "" || cookies[:username].nil?
+  if session[:username] == "" || session[:username].nil?
     logined = false
   else
     logined = true
@@ -66,9 +76,9 @@ get '/polls/:id' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  if cookies[:username] == "" || cookies[:username].nil?
+  if session[:username] == "" || session[:username].nil?
     state = 'guest'
-  elsif poll.voted?(cookies[:username])
+  elsif poll.voted?(session[:username])
     state = 'polled'
   else
     state = 'yet'
@@ -87,7 +97,7 @@ post '/polls/:id/votes' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  voter = cookies[:username]
+  voter = session[:username]
 
   if poll.voted?(voter)
     poll.undo(voter)
