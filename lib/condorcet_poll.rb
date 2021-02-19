@@ -44,7 +44,7 @@ class CondorcetPoll
       end
     end
 
-    scoreRanking = scores.sort { |lhs, rhs| lhs[1]<=>rhs[1] }.reverse
+    scoreRanking = scores.sort { |lhs, rhs| lhs[1] <=> rhs[1] }.reverse
     highScore = scoreRanking[0][1]
     highScoreCandidates = scoreRanking.select { |candidate| candidate[1] == highScore }
                                   .map { |element| element[0] }
