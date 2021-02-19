@@ -9,12 +9,12 @@ add_button.addEventListener('click', () => {
   rm_button.innerText = '削除';
   rm_button.setAttribute('type', 'button');
   rm_button.setAttribute('class', 'cand-remove');
-  rm_button.addEventListener('click', function () {
+  rm_button.addEventListener('click', () => {
     parent.removeChild(cand_elem);
   });
   input.setAttribute('type', 'text');
-  input.setAttribute('name', 'cand' + (++global_count).toString());
-  input.setAttribute('value', '候補' + global_count.toString());
+  input.setAttribute('name', `cand${(++global_count).toString()}`);
+  input.setAttribute('value', `候補${global_count.toString()}`);
   cand_elem.appendChild(input);
   cand_elem.appendChild(rm_button);
   parent.insertBefore(cand_elem, add_button.parentElement);

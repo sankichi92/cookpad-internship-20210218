@@ -17,11 +17,7 @@ submitButton.addEventListener('click', () => {
 });
 
 function send_key(pass) {
-  const raw = new Uint16Array(
-    [].map.call(pass, function (c) {
-      return c.charCodeAt(0);
-    })
-  ).buffer;
+  const raw = new Uint16Array([].map.call(pass, (c) => c.charCodeAt(0))).buffer;
   const keyConfig = {
     name: 'RSA-OAEP',
     modulusLength: 4096,
