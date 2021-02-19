@@ -22,7 +22,7 @@ class BordaPoll
       raise InvalidCandidateError.new(vote.candidates)
     end
 
-    if @votes.map {|element| element.voter }.include?(vote.voter) then
+    if @votes.map { |element| element.voter }.include?(vote.voter) then
       raise MultipleVoteError.new(vote)
     end
 
@@ -34,7 +34,7 @@ class BordaPoll
   end
 
   def count_votes
-    votedCandidates = @votes.map {|element| element.candidates }
+    votedCandidates = @votes.map { |element| element.candidates }
     result = Hash.new(0)
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate, i|

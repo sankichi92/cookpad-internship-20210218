@@ -22,7 +22,7 @@ class CondorcetPoll
       raise InvalidCandidateError.new(vote.candidates)
     end
 
-    if @votes.map {|element| element.voter }.include?(vote.voter) then
+    if @votes.map { |element| element.voter }.include?(vote.voter) then
       raise MultipleVoteError.new(vote)
     end
 
@@ -34,7 +34,7 @@ class CondorcetPoll
   end
 
   def count_votes
-    votedCandidates = @votes.map {|element| element.candidates }
+    votedCandidates = @votes.map { |element| element.candidates }
 
     # calc score max candidates
     scores = Hash.new(0)
@@ -44,17 +44,17 @@ class CondorcetPoll
       end
     end
 
-    scoreRanking = scores.sort {|lhs, rhs| lhs[1]<=>rhs[1]}.reverse
+    scoreRanking = scores.sort { |lhs, rhs| lhs[1]<=>rhs[1]}.reverse
     highScore = scoreRanking[0][1]
-    highScoreCandidates = scoreRanking.select {|candidate| candidate[1] == highScore}
-                                  .map {|element| element[0]}
+    highScoreCandidates = scoreRanking.select { |candidate| candidate[1] == highScore}
+                                  .map { |element| element[0]}
 
     if highScoreCandidates.length == 1 then
       return highScoreCandidates
     end
 
     # calc win max candidates in score max candidates
-    wins = Hash.new{|hash, key| hash[key] = Hash.new(0) }
+    wins = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
 
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate1, i|
@@ -73,8 +73,8 @@ class CondorcetPoll
     result = highScoreCandidates
     loop do
         newResult = result.permutation(2)
-                          .select {|pair| wins[pair[0]][pair[1]] > 0 }
-                          .map {|pair| pair[0]}
+                          .select { |pair| wins[pair[0]][pair[1]] > 0 }
+                          .map { |pair| pair[0]}
                           .uniq
         break if newResult.length == 0 || newResult.length ==result.length
         result = newResult

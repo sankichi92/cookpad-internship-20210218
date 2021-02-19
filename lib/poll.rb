@@ -20,7 +20,7 @@ class Poll
       raise InvalidCandidateError.new(vote.candidate)
     end
 
-    if @votes.map {|element| element.voter }.include?(vote.voter) then
+    if @votes.map { |element| element.voter }.include?(vote.voter) then
       raise MultipleVoteError.new(vote)
     end
 
@@ -32,7 +32,7 @@ class Poll
   end
 
   def count_votes
-    votedCandidates = @votes.map {|element| element.candidate }
+    votedCandidates = @votes.map { |element| element.candidate }
     result = Hash.new(0)
     for candidate in votedCandidates do
       result[candidate] += 1
