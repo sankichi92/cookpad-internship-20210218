@@ -44,10 +44,10 @@ class CondorcetPoll
       end
     end
 
-    scoreRanking = scores.sort { |lhs, rhs| lhs[1]<=>rhs[1]}.reverse
+    scoreRanking = scores.sort { |lhs, rhs| lhs[1]<=>rhs[1] }.reverse
     highScore = scoreRanking[0][1]
-    highScoreCandidates = scoreRanking.select { |candidate| candidate[1] == highScore}
-                                  .map { |element| element[0]}
+    highScoreCandidates = scoreRanking.select { |candidate| candidate[1] == highScore }
+                                  .map { |element| element[0] }
 
     if highScoreCandidates.length == 1 then
       return highScoreCandidates
@@ -74,9 +74,9 @@ class CondorcetPoll
     loop do
         newResult = result.permutation(2)
                           .select { |pair| wins[pair[0]][pair[1]] > 0 }
-                          .map { |pair| pair[0]}
+                          .map { |pair| pair[0] }
                           .uniq
-        break if newResult.length == 0 || newResult.length ==result.length
+        break if newResult.length == 0 || newResult.length == result.length
         result = newResult
     end
     result
