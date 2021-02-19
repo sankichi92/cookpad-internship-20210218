@@ -57,3 +57,4 @@ build-iPhoneSimulator/
 
 # frontend script
 node_modules/
+public/*.js

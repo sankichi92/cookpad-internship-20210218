@@ -13,7 +13,7 @@
 
 <h2>新規投票</h2>
 <form action="/polls/<%= index %>/votes" method="post">
-  <% unless polled %>
+  <% if state == 'yet' %>
     <label for="candidate">投票する候補名</label>
     <select name="candidate">
       <% poll.candidates.each do |cand| %>
@@ -22,7 +22,7 @@
     </select>
 
     <input type="submit" value="投票する">
-  <% else %>
+  <% elsif state == 'polled'%>
     <input type="submit" value="取り消す">
   <% end %>
 </form>

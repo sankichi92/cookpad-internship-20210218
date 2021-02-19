@@ -3,7 +3,7 @@ export default {
   entry: './ts/index.ts',
   output: {
     path: __dirname,
-    filename: 'bundle.js',
+    filename: 'public/bundle.js',
   },
   module: {
     rules: [

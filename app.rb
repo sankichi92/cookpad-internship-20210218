@@ -24,60 +24,25 @@ $draft = Poll.new('タイトル', [])
 
 get '/' do
   '投票一覧'
-  if cookies[:username].nil?
-    redirect to('/login'), 303
+  if cookies[:username] == "" || cookies[:username].nil?
+    logined = false
   else
-    erb :index, locals: { polls: $polls, draft: $draft }
+    logined = true
   end
+  erb :index, locals: { polls: $polls, draft: $draft, logined: logined }
 end
 
 get '/login' do
-  p cookies
-  unless cookies[:username].nil?
-    redirect to('/'), 303
-  else
-    erb :login
-  end
+  erb :login
 end
 
 get '/signup' do
   erb :signup
 end
 
-post '/signup', provides: :json do
-  params = JSON.parse(request.body.read)
-  unless $users[params["user"]].nil?
-    status 406
-  else
-    $users[params["user"]] = [params["pass"], JSON.dump(params["key"])]
-    status 200
-  end
-end
-
-post '/api/user_check', provides: :json do
-  params = JSON.parse request.body.read
-  p params["username"]
-  json :registered => ($users.include?(params["username"]))
-end
-
-post '/login' do
-  if params["username"].nil?
-    halt 400, '名前が無記名です'
-    erb :login
-  end
-  cookies[:username] = params["username"]
-end
-
 get '/logout' do
-  session.clear
-  cookies.clear
-  redirect to('/login'), 303
-end
-
-def cookies_check
-  if cookies[:username].nil?
-    redirect to('/login'), 303
-  end
+  cookies[:username] = ""
+  redirect to('/'), 303
 end
 
 post '/' do
@@ -85,21 +50,30 @@ post '/' do
   title = params["title"]
   cand_regex = /^cand\d+$/
   candidates = params.select { |key, value| cand_regex.match(key) }.map { |_, val| val }
+  halt 400, '候補は2つ以上必要です' if candidates.size < 2
   timelimit = TimeLimit.new(params["date"], params["time"])
-
+  if cookies[:username] == "" || cookies[:username].nil?
+    logined = false
+  else
+    logined = true
+  end
   $polls << Poll.new(title, candidates, timelimit)
   p params
-  erb :index, locals: { polls: $polls, draft: $default_draft }
+  erb :index, locals: { polls: $polls, draft: $default_draft, logined: logined }
 end
 
 get '/polls/:id' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  cookies_check
-  polled =  poll.voted?(cookies[:username])
-  p polled
-  erb :poll, locals: { index: index, poll: poll, polled: polled }
+  if cookies[:username] == "" || cookies[:username].nil?
+    state = 'guest'
+  elsif poll.voted?(cookies[:username])
+    state = 'polled'
+  else
+    state = 'yet'
+  end
+  erb :poll, locals: { index: index, poll: poll, state: state }
 end
 
 get '/polls/:id/result' do

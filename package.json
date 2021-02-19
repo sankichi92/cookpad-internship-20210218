@@ -11,7 +11,9 @@
     "lint-fix": "eslint --fix ts/**",
     "fmt": "prettier --w ts/**",
     "fmt-check": "prettier --check ts/**",
-    "lint": "eslint ts/**"
+    "lint": "eslint ts/**",
+    "prod": "webpack --mode production",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,9 @@
   },
   "homepage": "https://github.com/namachan10777/cookpad-internship-20210218#readme",
   "devDependencies": {
+    "@babel/core": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/register": "^7.12.13",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "eslint": "^7.20.0",

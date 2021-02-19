@@ -15,6 +15,10 @@
       <li><button id="add-cand" type="button">追加</button>
     </ul>
     <button type="submit">登録</button>
-    <a href="/logout">ログアウト</a>
+    <% if logined %>
+      <a href="/logout">ログアウト</a>
+    <% else %>
+      <a href="/login">ログイン</a>
+    <% end %>
   </form>
   <script type="text/javascript" src="index.js"></script>
