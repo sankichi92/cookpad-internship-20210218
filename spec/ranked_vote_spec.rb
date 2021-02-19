@@ -7,4 +7,11 @@ RSpec.describe RankedVote do
         expect(vote.voter).to eq 'Miyoshi'
         expect(vote.orderedCandidates).to eq ['Alice', 'Bob']
     end
+
+    it 'has a ordered candidate' do
+        vote = RankedVote.new('Miyoshi', ['Alice', 'Bob'])
+
+        expect(vote.orderedCandidates).to eq ['Alice', 'Bob']
+        expect(vote.orderedCandidates).not_to eq ['Bob', 'Alice']
+    end
 end
