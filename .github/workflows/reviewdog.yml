@@ -9,6 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+
       - uses: reviewdog/action-rubocop@v1
         with:
           github_token: ${{ secrets.github_token }}
