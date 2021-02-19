@@ -84,6 +84,26 @@ RSpec.describe CondorcetPoll do
       result2 = poll2.get_winner
 
       expect(result2).to eq 'Carol'
+
+      candidates3 = ['A', 'B', 'C', 'D']
+      poll3 = CondorcetPoll.new('Great Poll', candidates3)
+      candidates3.permutation.each_with_index do |perm, index|
+        poll3.add_vote(RankedVote.new(index, perm))
+      end
+
+      result3 = poll3.get_winner
+
+      expect(result3).to eq nil
+
+      candidates4 = ['A', 'B', 'C']
+      poll4 = CondorcetPoll.new('Great Poll', candidates4)
+      candidates4.permutation.each_with_index do |perm, index|
+        poll4.add_vote(RankedVote.new(index, perm))
+      end
+
+      result4 = poll4.get_winner
+
+      expect(result4).to eq nil
     end
   end
 end

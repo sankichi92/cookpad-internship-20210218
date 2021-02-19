@@ -50,10 +50,11 @@ class CondorcetPoll
             end
             if cand0cnt > cand1cnt
                 candidateWins[cand0] += 1
-            else
+            elsif cand0cnt < cand1cnt
                 candidateWins[cand1] += 1
             end
         end
-        candidateWins.max{ |x, y| x[1] <=> y[1] }[0]
+
+        candidateWins.select { |k, v| v == @candidates.length - 1 }.map {|k, v| k}[0]
     end
 end
