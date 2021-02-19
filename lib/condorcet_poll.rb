@@ -54,7 +54,7 @@ class CondorcetPoll
     end
 
     # calc win max candidates in score max candidates
-    wins = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
+    wins = Hash.new { |hash, key| hash[key] = Hash.new(0) }
 
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate1, i|
@@ -72,12 +72,12 @@ class CondorcetPoll
 
     result = highScoreCandidates
     loop do
-        newResult = result.permutation(2)
-                          .select { |pair| wins[pair[0]][pair[1]] > 0 }
-                          .map { |pair| pair[0] }
-                          .uniq
-        break if newResult.length == 0 || newResult.length == result.length
-        result = newResult
+      newResult = result.permutation(2)
+                        .select { |pair| wins[pair[0]][pair[1]] > 0 }
+                        .map { |pair| pair[0] }
+                        .uniq
+      break if newResult.length == 0 || newResult.length == result.length
+      result = newResult
     end
     result
   end

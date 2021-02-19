@@ -8,4 +8,4 @@ gem 'sinatra-contrib'
 
 gem 'rack-test'
 gem 'rspec'
-# gem 'rubocop'
+gem 'rubocop'
