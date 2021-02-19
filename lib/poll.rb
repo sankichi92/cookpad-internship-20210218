@@ -12,7 +12,7 @@ class Poll
 
   def add_vote(vote)
     unless candidates.include?(vote.candidate)
-      raise InvalidCandidateError, "Candidate '#{vote.candidate}' is invalid"
+       raise InvalidCandidateError, "Candidate '#{vote.candidate}' is invalid"
     end
 
     @votes.push(vote)
