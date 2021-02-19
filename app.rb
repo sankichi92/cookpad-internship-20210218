@@ -3,7 +3,7 @@ require_relative 'lib/poll'
 require 'sinatra'
 
 get '/' do
-  erb :index, :locals => {:polls => $polls}
+  erb :index, locals: { polls: $polls }
 end
 
 get '/polls/:id' do |id|
