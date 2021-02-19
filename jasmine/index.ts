@@ -15,5 +15,13 @@ describe("buf2str", () => {
   });
 });
 
+describe("generate_salt_and_encrypted_pass", () => {
+ it('generate pubkey', (done: DoneFn) => {
+   Index.generate_salt_and_encrypted_pass("password").then(pair => {
+     console.log(pair.password);
+     expect(pair.password.length).toEqual(64);
+     expect(pair.pubkey.alg).toEqual('RSA-OAEP-256');
+     done();
    });
  });
+});

@@ -24,7 +24,9 @@ export function generate_salt_and_encrypted_pass(password: string): Promise<KeyP
       };
       crypto.subtle.encrypt(config, key.publicKey, raw_pass).then(encrypted => {;
         crypto.subtle.exportKey("jwk", key.publicKey).then(pubkey => {
-          resolve({password: buf2str(encrypted), pubkey});
+          crypto.subtle.digest("SHA-256", encrypted).then(password_digest => {
+            resolve({password: buf2str(password_digest), pubkey});
+          });
         });
       });
     })
