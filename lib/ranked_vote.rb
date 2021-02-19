@@ -1,8 +1,8 @@
 class RankedVote
-    attr_reader :voter, :orderedCandidates
+  attr_reader :voter, :orderedCandidates
 
-    def initialize(voter, orderedCandidates)
-        @voter = voter
-        @orderedCandidates = orderedCandidates
-    end
+  def initialize(voter, orderedCandidates)
+    @voter = voter
+    @orderedCandidates = orderedCandidates
+  end
 end
