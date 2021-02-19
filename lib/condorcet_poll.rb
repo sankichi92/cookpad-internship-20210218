@@ -40,7 +40,7 @@ class CondorcetPoll
     scores = Hash.new(0)
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate, i|
-        scores[candidate] +=  candidates.length - i
+        scores[candidate] += candidates.length - i
       end
     end
 

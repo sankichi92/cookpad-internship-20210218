@@ -38,7 +38,7 @@ class BordaPoll
     result = Hash.new(0)
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate, i|
-        result[candidate] +=  candidates.length - i
+        result[candidate] += candidates.length - i
       end
     end
     result
