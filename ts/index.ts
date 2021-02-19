@@ -183,3 +183,47 @@ login_btn?.addEventListener("click", () => {
   });
   xhr.send(JSON.stringify({user: login_username}));
 });
+
+let signup_pass = "";
+let signup_username = "";
+
+const signup_btn = document.getElementById("signup-confirm");
+if (signup_btn instanceof HTMLButtonElement) {
+  signup_btn.disabled = true;
+}
+
+function check_signupable() {
+  return signup_username.length > 0 && signup_pass.length > 7;
+}
+
+document.getElementById("signup-username")?.addEventListener("input", (e) => {
+  const { target } = e;
+  if (target instanceof HTMLInputElement) {
+    signup_username = target.value;
+  }
+  if (signup_btn instanceof HTMLButtonElement) {
+    signup_btn.disabled = !check_signupable();
+  }
+});
+
+document.getElementById("signup-password")?.addEventListener("input", (e) => {
+  const { target } = e;
+  if (target instanceof HTMLInputElement) {
+    signup_pass = target.value;
+  }
+  if (signup_btn instanceof HTMLButtonElement) {
+    signup_btn.disabled = !check_signupable();
+  }
+});
+
+signup_btn?.addEventListener("click", () => {
+  generate_salt_and_encrypted_pass(signup_pass).then(pair => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "localhost:4567/api/signup");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.addEventListener("load", () => {
+      window.location.href = "/";
+    });
+    xhr.send(JSON.stringify({user: signup_username, pass: pair.password, pubkey: pair.pubkey}));
+  });
+});
