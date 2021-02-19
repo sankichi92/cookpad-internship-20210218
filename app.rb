@@ -13,7 +13,7 @@ get '/polls/:id' do |id|
     halt 404, "the poll id is not found"
   end
 
-  erb :poll, :locals => {:index => id.to_i, :poll => poll}
+  erb :poll, locals: { index: id.to_i, poll: poll }
 end
 
 post '/polls/:id/votes' do |id|
@@ -42,5 +42,5 @@ get '/polls/:id/result' do |id|
   end
 
   poll.count_votes
-  erb :poll_result, :locals => {:poll => poll, :result => poll.count_votes}
+  erb :poll_result, locals: { poll: poll, result: poll.count_votes }
 end
