@@ -43,7 +43,7 @@ class CondorcetPoll
         scores[candidate] +=  candidates.length - i
       end
     end
-    
+
     scoreRanking = scores.sort {|lhs, rhs| lhs[1]<=>rhs[1]}.reverse
     highScore = scoreRanking[0][1]
     highScoreCandidates = scoreRanking.select {|candidate| candidate[1] == highScore}
@@ -55,7 +55,7 @@ class CondorcetPoll
 
     # calc win max candidates in score max candidates
     wins = Hash.new{|hash, key| hash[key] = Hash.new(0) }
-    
+
     votedCandidates.each do |rankedCandidates|
       rankedCandidates.each_with_index do |candidate1, i|
         rankedCandidates.each_with_index do |candidate2, j|

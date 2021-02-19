@@ -10,7 +10,7 @@ RSpec.describe Poll do
     expect(poll.candidates).to eq ['Alice', 'Bob']
     expect(poll.closing).to eq DateTime.new(2020, 2, 18, 14, 57, 00, 0.125)
   end
-  
+
   describe '#add_vote' do
     it 'saves the given vote' do
       poll = Poll.new('Awesome Poll', ['Alice', 'Bob'], DateTime.now + 10)
@@ -59,7 +59,7 @@ RSpec.describe Poll do
       poll.add_vote(Vote.new('Ellen', 'Bob'))
 
       result = poll.count_votes
-       
+
       expect(result['Alice']).to eq 2
       expect(result['Bob']).to eq 1
     end
@@ -71,7 +71,7 @@ RSpec.describe Poll do
       poll.add_vote(Vote.new('Ellen', 'Bob'))
 
       result = poll.count_votes
-       
+
       expect(result['Alice']).to eq 0
       expect(result['Bob']).to eq 3
     end
