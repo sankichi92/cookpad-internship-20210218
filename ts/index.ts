@@ -6,7 +6,7 @@ export interface KeyPair {
 export function buf2str(buf: ArrayBuffer): string {
   const view = new Uint8Array(buf);
   return Array.prototype.map
-    .call(view, (byte) => ('00' + byte.toString(16)).slice(-2))
+    .call(view, (byte) => `00${byte.toString(16)}`.slice(-2))
     .join('');
 }
 
@@ -62,7 +62,7 @@ export function generate_salt_and_encrypted_pass(
             digest_pass(password, key.publicKey).then((pass) =>
               resolve({
                 password: buf2str(pass),
-                pubkey: pubkey,
+                pubkey,
               })
             );
           })
