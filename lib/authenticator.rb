@@ -9,21 +9,21 @@ class Authenticator
     @record = {}
   end
 
-  def register(username, pubkey, pass)
+  def register(username, salt, pass)
     unless @record[username].nil?
       raise AlreadyRegistered
     end
     pair = {
-      pubkey: pubkey,
+      salt: salt,
       pass: pass,
     }
     @record[username] = pair
   end
 
-  def req_pubkey(username)
+  def req_salt(username)
     if @record[username].nil?
       raise UserNotFound
     end
-    @record[username][:pubkey]
+    @record[username][:salt]
   end
 end

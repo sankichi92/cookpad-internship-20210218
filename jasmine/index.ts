@@ -33,16 +33,6 @@ describe('str2buf', () => {
   });
 });
 
-describe('generate_salt_and_encrypted_pass', () => {
-  it('generate pubkey', (done) => {
-    Index.generate_salt_and_encrypted_pass('password').then((pair) => {
-      expect(pair.password.length).toEqual(64);
-      expect(pair.pubkey.alg).toEqual('RSA-OAEP-256');
-      done();
-    });
-  });
-});
-
 describe('hmac', () => {
   it('hmac', (done) => {
     const pass = '7768617420646f2079612077616e7420666f72206e6f7468696e673f';

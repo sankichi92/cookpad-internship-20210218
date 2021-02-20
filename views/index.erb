@@ -5,20 +5,23 @@
       <li><a href="/polls/<%= i %>"><%= poll.title %></a></li>
     <% end %>
   </ul>
-<h2>投票追加</h2>
-  <form action="/" method="post">
-    <label for="title"><%=draft.title%></label>
-    <input type="text" name="title" value="<%=draft.title%>">
-    <input name="date" type="date" >
-    <input name="time" type="time" >
-    <ul>
-      <li><button id="add-cand" type="button">追加</button>
-    </ul>
-    <button type="submit">登録</button>
-    <% if logined %>
-      <a href="/logout">ログアウト</a>
-    <% else %>
-      <a href="/login">ログイン</a>
-    <% end %>
-  </form>
-  <script type="text/javascript" src="index.js"></script>
+  <% unless sess[:payload].nil? %>
+    <h2>投票追加</h2>
+      <form action="/" method="post">
+        <label for="title"><%=sess[:payload].title%></label>
+        <input type="text" name="title" value="<%=sess[:payload].title%>">
+        <input name="date" type="date" >
+        <input name="time" type="time" >
+        <ul>
+          <li><button id="add-cand" type="button">追加</button>
+        </ul>
+        <button type="submit">登録</button>
+
+      </form>
+  <% end %>
+  <% if sess[:login] %>
+    <a href="/logout">ログアウト</a>
+  <% else %>
+    <a href="/login">ログイン</a>
+  <% end %>
+<script type="text/javascript" src="bundle.js"></script>

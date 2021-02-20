@@ -5,6 +5,7 @@ require 'json'
 require_relative 'lib/poll'
 require_relative 'lib/vote'
 require_relative 'lib/timelimit'
+require_relative 'lib/session_manager'
 require 'time'
 
 enable :sessions
@@ -17,42 +18,53 @@ $polls = [
 $users = {
 }
 
-$sessions = {}
-
-$default_draft = Poll.new('タイトル', [])
-
-$draft = Poll.new('タイトル', [])
+$sessions = SessionManager.new()
 
 get '/' do
   '投票一覧'
-  if session[:username] == "" || session[:username].nil?
-    logined = false
-  else
-    logined = true
-  end
-  erb :index, locals: { polls: $polls, draft: $draft, logined: logined }
+  erb :index, locals: { polls: $polls, sess: $sessions.request_info(session[:session_id]) }
 end
 
 get '/login' do
   erb :login
 end
 
-post '/login' do
-  if params["username"].nil? || params["username"].size == 0
-    erb :login
+get '/logout' do
+  $sessions.logout(session[:session_id])
+  redirect to('/'), 303
+end
+
+post '/login', provides: :json do
+  param = JSON.parse request.body.read
+  unless param["user"].nil?
+    begin
+      json $sessions.start_login(session[:session_id], param["user"])
+    rescue Authenticator::UserNotFound
+      halt 403, json({result: false})
+    end
   else
-    session[:username] = params["username"]
-    erb :index, locals: { polls: $polls, draft: $draft, logined: true }
+    begin
+      json $sessions.confirm_login(session[:session_id], param["token"], Poll.new("投票", []))
+    rescue SessionManager::WrongPassword
+      halt 403, json({result: false})
+    rescue SessionManager::UnknownSession
+      halt 403, json({result: false})
+    end
+  end
+end
+
+post '/signup', provides: :json do
+  params = JSON.parse request.body.read
+  begin
+    $sessions.signup(session[:session_id], params['user'], params['salt'], params['pass'], Poll.new('タイトル', []))
+    json :result => true
+  rescue Authenticator::AlreadyRegistered
+    halt 400, json({:result => false, msg: '既に登録されています'})
   end
 end
 
 get '/signup' do
   erb :signup
-end
-
-get '/logout' do
-  session[:username] = ""
-  redirect to('/'), 303
 end
 
 post '/' do
@@ -68,17 +80,17 @@ post '/' do
     logined = true
   end
   $polls << Poll.new(title, candidates, timelimit)
-  p params
-  erb :index, locals: { polls: $polls, draft: $default_draft, logined: logined }
+  erb :index, locals: { polls: $polls, sess: $sessions.request_info(session[:session_id]) }
 end
 
 get '/polls/:id' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  if session[:username] == "" || session[:username].nil?
+  info = $sessions.request_info(session[:session_id])
+  if info[:user].nil?
     state = 'guest'
-  elsif poll.voted?(session[:username])
+  elsif poll.voted?(info[:user])
     state = 'polled'
   else
     state = 'yet'
@@ -97,7 +109,9 @@ post '/polls/:id/votes' do
   index = params['id'].to_i
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
-  voter = session[:username]
+  info = $sessions.request_info(session[:session_id])
+  halt 403, 'ログインが必要です' if not info[:login]
+  voter = info[:user]
 
   if poll.voted?(voter)
     poll.undo(voter)
