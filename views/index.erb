@@ -5,7 +5,7 @@
       <li><a href="/polls/<%= i %>"><%= poll.title %></a></li>
     <% end %>
   </ul>
-  <% unless sess[:payload].nil? %>
+  <% if sess[:login] %>
     <h2>投票追加</h2>
       <form action="/" method="post">
         <label for="title"><%=sess[:payload].title%></label>

@@ -88,7 +88,7 @@ get '/polls/:id' do
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
   info = $sessions.request_info(session[:session_id])
-  if info[:user].nil?
+  if not info[:login]
     state = 'guest'
   elsif poll.voted?(info[:user])
     state = 'polled'
