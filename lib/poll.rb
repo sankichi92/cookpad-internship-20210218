@@ -25,7 +25,7 @@ class Poll
 
   def undo(voter)
     @voters.delete(voter)
-    idx = @votes.find_index { |vote| vote.voter == voter}
+    idx = @votes.find_index { |vote| vote.voter == voter }
     @votes.delete_at(idx)
   end
 

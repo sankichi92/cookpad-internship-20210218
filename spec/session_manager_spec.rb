@@ -13,14 +13,15 @@ RSpec.describe 'SessionManager' do
     it 'signup and login' do
       session_manager = SessionManager.new()
       session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D')
-      expect(session_manager.sessions['SESS']).to eq ({user: 'USER', login: true, token: nil, payload: 'D'})
-      expect(session_manager.authenticator.record).to eq ({'USER' => ({salt: 'PUBKEY', pass: 'DEADBEEF'})})
+      expect(session_manager.sessions['SESS']).to eq ({ user: 'USER', login: true, token: nil, payload: 'D' })
+      expect(session_manager.authenticator.record).to eq ({ 'USER' => ({ salt: 'PUBKEY', pass: 'DEADBEEF' }) })
     end
 
     it 'if already registered, throw exception' do
       session_manager = SessionManager.new()
       session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D1')
-      expect {session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D2')}.to raise_error Authenticator::AlreadyRegistered
+      expect {
+session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D2') }.to raise_error Authenticator::AlreadyRegistered
       expect(session_manager.sessions.size).to eq 1
       expect(session_manager.authenticator.record.size).to eq 1
     end
@@ -46,7 +47,7 @@ RSpec.describe 'SessionManager' do
 
     it 'if user is not registered, throw error' do
       session_manager = SessionManager.new()
-      expect {session_manager.start_login('SESS2', 'USER')}.to raise_error Authenticator::UserNotFound
+      expect { session_manager.start_login('SESS2', 'USER') }.to raise_error Authenticator::UserNotFound
     end
 
     it 'session has login state' do
@@ -75,7 +76,7 @@ RSpec.describe 'SessionManager' do
   describe  '#request_info' do
     it 'adapt guest mode' do
       session_manager = SessionManager.new()
-      expect(session_manager.request_info('SESS')).to eq ({login: false, payload: nil, user: nil})
+      expect(session_manager.request_info('SESS')).to eq ({ login: false, payload: nil, user: nil })
     end
   end
 
@@ -97,14 +98,14 @@ RSpec.describe 'SessionManager' do
       res = session_manager.start_login('SESS1', 'USER')
       token = res[:token]
       login_token = calc_login_response(token, 'BADBEEF')
-      expect {session_manager.confirm_login('SESS1', login_token, 'D')}.to raise_error SessionManager::WrongPassword
+      expect { session_manager.confirm_login('SESS1', login_token, 'D') }.to raise_error SessionManager::WrongPassword
     end
 
     it 'failed to login' do
       session_manager = SessionManager.new()
       session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D1')
       login_token = calc_login_response('', 'BADBEEF')
-      expect {session_manager.confirm_login('SESS1', login_token, 'D')}.to raise_error SessionManager::UnknownSession
+      expect { session_manager.confirm_login('SESS1', login_token, 'D') }.to raise_error SessionManager::UnknownSession
     end
   end
 

@@ -22,7 +22,7 @@ class SessionManager
   def signup(sess, user, salt, pass, payload)
     sess = sess.to_s
     @authenticator.register(user, salt, pass)
-    sessions[sess] = {user: user, login: true, token: nil, payload: payload}
+    sessions[sess] = { user: user, login: true, token: nil, payload: payload }
   end
 
   def start_login(sess, user)
@@ -36,14 +36,14 @@ class SessionManager
     unless @sessions[sess].nil?
       payload = @sessions[sess][:payload]
     end
-    @sessions[sess] = {user: user, login: false, token: token, payload: payload }
+    @sessions[sess] = { user: user, login: false, token: token, payload: payload }
     res
   end
 
   def request_info(sess)
     sess = sess.to_s
     if @sessions[sess].nil?
-      @sessions[sess] = {user: nil, login: false, token: nil, payload: nil }
+      @sessions[sess] = { user: nil, login: false, token: nil, payload: nil }
     end
     ({ login: @sessions[sess][:login], user: @sessions[sess][:user], payload: @sessions[sess][:payload] })
   end
@@ -58,7 +58,7 @@ class SessionManager
     pass = @authenticator.record[user][:pass]
     token_bytes = token.scan(/../).map { |b| b.to_i(16) }.pack('C*')
     pass_bytes = pass.scan(/../).map { |b| b.to_i(16) }.pack('C*')
-    login_token = OpenSSL::HMAC.digest("SHA256", token_bytes, pass_bytes).unpack("C*").map {|b| b.to_s(16) }.join('')
+    login_token = OpenSSL::HMAC.digest("SHA256", token_bytes, pass_bytes).unpack("C*").map { |b| b.to_s(16) }.join('')
     if login_token.to_s == res_token.to_s
       @sessions[sess][:login] = true
       @sessions[sess][:payload] = payload

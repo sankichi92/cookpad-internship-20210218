@@ -12,13 +12,13 @@ RSpec.describe 'Authenticator' do
     it 'register username, salt and encrypted password' do
       auth = Authenticator.new()
       auth.register('namachan', 'PUBKEY', 'PASS')
-      expect(auth.record['namachan']).to eq ({salt: 'PUBKEY', pass: 'PASS'})
+      expect(auth.record['namachan']).to eq ({ salt: 'PUBKEY', pass: 'PASS' })
     end
 
     it 'if the username was already registered, throw exception' do
       auth = Authenticator.new()
       auth.register('namachan', 'PUBKEY', 'PASS')
-      expect {auth.register('namachan', '', '')}.to raise_error Authenticator::AlreadyRegistered
+      expect { auth.register('namachan', '', '') }.to raise_error Authenticator::AlreadyRegistered
     end
   end
 
@@ -31,7 +31,7 @@ RSpec.describe 'Authenticator' do
     it 'if the username was not registered, throw exception' do
       auth = Authenticator.new()
       auth.register('namachan', 'PUBKEY', 'PASS')
-      expect{auth.req_salt('hogehoge')}.to raise_error Authenticator::UserNotFound
+      expect { auth.req_salt('hogehoge') }.to raise_error Authenticator::UserNotFound
     end
   end
 end
