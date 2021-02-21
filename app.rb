@@ -36,18 +36,18 @@ end
 
 post '/login', provides: :json do
   param = JSON.parse request.body.read
-  unless param["user"].nil?
-    begin
-      json $sessions.start_login(session[:session_id], param["user"])
-    rescue Authenticator::UserNotFound
-      halt 403, json({ result: false })
-    end
-  else
+  if param["user"].nil?
     begin
       json $sessions.confirm_login(session[:session_id], param["token"], Poll.new("投票", []))
     rescue SessionManager::WrongPassword
       halt 403, json({ result: false })
     rescue SessionManager::UnknownSession
+      halt 403, json({ result: false })
+    end
+  else
+    begin
+      json $sessions.start_login(session[:session_id], param["user"])
+    rescue Authenticator::UserNotFound
       halt 403, json({ result: false })
     end
   end
@@ -57,9 +57,9 @@ post '/signup', provides: :json do
   params = JSON.parse request.body.read
   begin
     $sessions.signup(session[:session_id], params['user'], params['salt'], params['pass'], Poll.new('タイトル', []))
-    json :result => true
+    json ({ result: true })
   rescue Authenticator::AlreadyRegistered
-    halt 400, json({ :result => false, msg: '既に登録されています' })
+    halt 400, json({ result: false, msg: '既に登録されています' })
   end
 end
 
@@ -110,7 +110,7 @@ post '/polls/:id/votes' do
   poll = $polls[index]
   halt 404, '投票が見つかりませんでした' if poll.nil?
   info = $sessions.request_info(session[:session_id])
-  halt 403, 'ログインが必要です' if not info[:login]
+  halt 403, 'ログインが必要です' unless info[:login]
   voter = info[:user]
 
   if poll.voted?(voter)

@@ -109,9 +109,7 @@ RSpec.describe 'PollApp' do
       res_body = JSON.parse res.body
       expect(res_body["token"].size).to eq 64
       login_token = calc_login_response(res_body["token"], 'BADBEEF')
-      p "must be wrong----------------------------="
       res = browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
-      p "must be wrong----------------------------="
       expect(JSON.parse(res.body)['result']).to eq false
     end
 

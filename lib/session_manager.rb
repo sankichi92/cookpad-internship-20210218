@@ -30,7 +30,7 @@ class SessionManager
     token = OpenSSL::BN.rand(256, 0, false).to_s(16)
     res = {
       salt: @authenticator.req_salt(user),
-      token: token
+      token: token,
     }
     payload = nil
     unless @sessions[sess].nil?
