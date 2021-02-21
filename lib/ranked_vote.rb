@@ -1,17 +1,17 @@
 require 'date'
 
-class Vote
-  attr_reader :voter, :candidate, :time
+class RankedVote
+  attr_reader :voter, :candidates, :time
 
   class EmptyNameError < StandardError
   end
 
-  def initialize(voter, candidate)
-    if voter.size == 0
+  def initialize(voter, candidates)
+    if voter == ''
       raise EmptyNameError
     end
     @voter = voter
-    @candidate = candidate
+    @candidates = candidates
     @time = Time.now
   end
 end
