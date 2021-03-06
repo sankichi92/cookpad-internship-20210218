@@ -19,20 +19,17 @@ export function str2buf(s: string): ArrayBuffer {
   return buf.buffer;
 }
 
-export function generate_salt_and_encrypted_pass(
+export async function generate_salt_and_encrypted_pass(
   password: string
 ): Promise<KeyPair> {
   const raw_pass = new TextEncoder().encode(password);
-  return new Promise((resolve, reject) => {
-    const buf = new Uint8Array(64);
-    const salt = crypto.getRandomValues(buf);
-    hmac(raw_pass, salt)
-      .then((dig) => resolve({ pass: buf2str(dig), salt: buf2str(salt) }))
-      .catch(reject);
-  });
+  const buf = new Uint8Array(64);
+  const salt = crypto.getRandomValues(buf);
+  const dig = await hmac(raw_pass, salt);
+  return { pass: buf2str(dig), salt: buf2str(salt) };
 }
 
-export function hmac(
+export async function hmac(
   msg_buf: ArrayBuffer,
   key_buf: ArrayBuffer
 ): Promise<ArrayBuffer> {
@@ -48,42 +45,30 @@ export function hmac(
   for (let i = 0; i < msg.byteLength; ++i) {
     ipad_k_m[i + 64] = msg[i];
   }
-  return new Promise((resolve, reject) => {
-    crypto.subtle
-      .digest('SHA-256', ipad_k_m)
-      .then((i_dig_buf) => {
-        const i_dig = new Uint8Array(i_dig_buf);
-        const opad_k_m = new Uint8Array(64 + i_dig.byteLength);
-        for (let i = 0; i < 64; ++i) {
-          opad_k_m[i] = 0x5c;
-        }
-        for (let i = 0; i < key.byteLength; ++i) {
-          opad_k_m[i] ^= key[i];
-        }
-        for (let i = 0; i < i_dig.byteLength; ++i) {
-          opad_k_m[i + 64] = i_dig[i];
-        }
-        crypto.subtle.digest('SHA-256', opad_k_m).then(resolve).catch(reject);
-      })
-      .catch(reject);
-  });
+  const i_dig_buf = await crypto.subtle.digest('SHA-256', ipad_k_m);
+  const i_dig = new Uint8Array(i_dig_buf);
+  const opad_k_m = new Uint8Array(64 + i_dig.byteLength);
+  for (let i = 0; i < 64; ++i) {
+    opad_k_m[i] = 0x5c;
+  }
+  for (let i = 0; i < key.byteLength; ++i) {
+    opad_k_m[i] ^= key[i];
+  }
+  for (let i = 0; i < i_dig.byteLength; ++i) {
+    opad_k_m[i + 64] = i_dig[i];
+  }
+  return await crypto.subtle.digest('SHA-256', opad_k_m);
 }
 
-export function hmac_pass(
+export async function hmac_pass(
   pass: string,
   key: string,
   token: string
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    hmac(str2buf(pass), str2buf(key)).then((digested) => {
-      const raw_token = str2buf(token);
-      hmac(digested, raw_token)
-        .then((tok) => {
-          resolve(buf2str(tok));
-        })
-        .catch(reject);
-    });
-  });
+  const digested = await hmac(str2buf(pass), str2buf(key));
+  const raw_token = str2buf(token);
+  const tok = await hmac(digested, raw_token);
+  return buf2str(tok);
 }
 
 let login_pass = '';
