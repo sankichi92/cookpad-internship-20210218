@@ -109,7 +109,7 @@ RSpec.describe 'PollApp' do
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
       res = browser.post(
-                '/login',
+                '/challenge_token',
                 JSON.generate({ user: 'namachan' }),
                 { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
@@ -129,7 +129,7 @@ RSpec.describe 'PollApp' do
                 '/signup',
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
       res_body = JSON.parse res.body
       expect(res_body["token"].size).to eq 64
@@ -144,7 +144,7 @@ RSpec.describe 'PollApp' do
                 '/signup',
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/login', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 403
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
@@ -152,7 +152,7 @@ RSpec.describe 'PollApp' do
 
     it 'skip chalenge' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/login', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 403
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
@@ -178,7 +178,7 @@ RSpec.describe 'PollApp' do
                     '/signup',
                     JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                     { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
         browser.post(
@@ -200,7 +200,7 @@ RSpec.describe 'PollApp' do
         browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
         browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
 { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
         browser.post(
@@ -223,7 +223,7 @@ RSpec.describe 'PollApp' do
                     '/signup',
                     JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                     { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
         browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
