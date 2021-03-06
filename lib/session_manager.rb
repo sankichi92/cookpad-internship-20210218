@@ -63,6 +63,7 @@ class SessionManager
     if login_token.to_s == res_token.to_s
       @sessions[sess][:login] = true
       @sessions[sess][:payload] = payload
+      @sessions[sess].delete(:token)
       ({ result: true })
     else
       raise WrongPassword
