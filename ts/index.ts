@@ -33,31 +33,11 @@ export async function hmac(
   msg_buf: ArrayBuffer,
   key_buf: ArrayBuffer
 ): Promise<ArrayBuffer> {
-  const msg = new Uint8Array(msg_buf);
-  const key = new Uint8Array(key_buf);
-  const ipad_k_m = new Uint8Array(64 + msg.byteLength);
-  for (let i = 0; i < 64; ++i) {
-    ipad_k_m[i] = 0x36;
-  }
-  for (let i = 0; i < key.byteLength; ++i) {
-    ipad_k_m[i] ^= key[i];
-  }
-  for (let i = 0; i < msg.byteLength; ++i) {
-    ipad_k_m[i + 64] = msg[i];
-  }
-  const i_dig_buf = await crypto.subtle.digest('SHA-256', ipad_k_m);
-  const i_dig = new Uint8Array(i_dig_buf);
-  const opad_k_m = new Uint8Array(64 + i_dig.byteLength);
-  for (let i = 0; i < 64; ++i) {
-    opad_k_m[i] = 0x5c;
-  }
-  for (let i = 0; i < key.byteLength; ++i) {
-    opad_k_m[i] ^= key[i];
-  }
-  for (let i = 0; i < i_dig.byteLength; ++i) {
-    opad_k_m[i + 64] = i_dig[i];
-  }
-  return await crypto.subtle.digest('SHA-256', opad_k_m);
+  const cryptoKey = await crypto
+    .subtle
+    .importKey('raw', key_buf, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const digest = await crypto.subtle.sign({ name: 'HMAC' }, cryptoKey, msg_buf);
+  return digest;
 }
 
 export async function hmac_pass(
