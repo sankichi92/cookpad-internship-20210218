@@ -39,7 +39,7 @@ post '/challenge_token', provides: :json do
   begin
     json $sessions.start_login(session[:session_id], param["user"])
   rescue Authenticator::UserNotFound
-    halt 403, json({ result: false })
+    halt 401, json({ result: false })
   end
 end
 
@@ -48,9 +48,9 @@ post '/login', provides: :json do
   begin
     json $sessions.confirm_login(session[:session_id], param["token"], Poll.new("投票", []))
   rescue SessionManager::WrongPassword
-    halt 403, json({ result: false })
+    halt 401, json({ result: false })
   rescue SessionManager::UnknownSession
-    halt 403, json({ result: false })
+    halt 401, json({ result: false })
   end
 end
 
