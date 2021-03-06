@@ -43,8 +43,9 @@ PLATFORMS
 DEPENDENCIES
   rack-test
   rspec
+  rspec-mocks
   sinatra
   sinatra-contrib
 
 BUNDLED WITH
-   2.2.8
+   2.2.13

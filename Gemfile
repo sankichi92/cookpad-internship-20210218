@@ -8,4 +8,5 @@ gem 'sinatra-contrib'
 
 gem 'rack-test'
 gem 'rspec'
+gem 'rspec-mocks'
 # gem 'rubocop'
