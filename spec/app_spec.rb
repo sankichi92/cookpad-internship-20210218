@@ -68,27 +68,36 @@ RSpec.describe 'PollApp' do
   end
 
   describe 'POST /signup' do
+    let(:session_manager) { SessionManager.new() }
+    before do
+      $sessions = session_manager
+    end
     it 'signup' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
+      expect($sessions.sessions.length).to eq 0
       res = browser.post(
                 '/signup',
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
-      expect(JSON.parse(res.body)['result']).to eq true
+      expect($sessions.sessions.length).to eq 1
+      expect(res.body).to eq({ result: true }.to_json)
     end
     it 'already registered' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      browser.post(
+      expect($sessions.sessions.length).to eq 0
+      res = browser.post(
                 '/signup',
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
+      expect($sessions.sessions.length).to eq 1
       res = browser.post(
                 '/signup',
                 JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
                 { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 400
-      expect(JSON.parse(res.body)['result']).to eq false
+      expect($sessions.sessions.length).to eq 1
+      expect(res.body).to eq({ result: false, msg: '既に登録されています' }.to_json)
     end
   end
 
