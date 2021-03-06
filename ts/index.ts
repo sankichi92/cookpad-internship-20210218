@@ -120,7 +120,7 @@ document.getElementById('login-password')?.addEventListener('input', (e) => {
 
 login_btn?.addEventListener('click', () => {
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://localhost:4567/login');
+  xhr.open('POST', 'http://localhost:4567/challenge_token');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.addEventListener('load', () => {
     const res = JSON.parse(xhr.response);
