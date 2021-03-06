@@ -68,43 +68,68 @@ RSpec.describe 'PollApp' do
   end
 
   describe 'POST /signup' do
+    let(:session_manager) { SessionManager.new() }
+    before do
+      $sessions = session_manager
+    end
     it 'signup' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
+      expect($sessions.sessions.length).to eq 0
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
-      expect(JSON.parse(res.body)['result']).to eq true
+      expect($sessions.sessions.length).to eq 1
+      expect(res.body).to eq({ result: true }.to_json)
     end
     it 'already registered' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
+      expect($sessions.sessions.length).to eq 0
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
+      expect($sessions.sessions.length).to eq 1
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 400
-      expect(JSON.parse(res.body)['result']).to eq false
+      expect($sessions.sessions.length).to eq 1
+      expect(res.body).to eq({ result: false, msg: '既に登録されています' }.to_json)
     end
   end
 
   describe 'POS /login' do
     it 'login' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post(
+                '/challenge_token',
+                JSON.generate({ user: 'namachan' }),
+                { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
       res_body = JSON.parse res.body
       expect(res_body["token"].size).to eq 64
       login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-      res = browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post(
+                '/login',
+                JSON.generate({ token: login_token }),
+                { 'CONTENT_TYPE' => 'application/json' })
       expect(JSON.parse(res.body)['result']).to eq true
     end
 
     it 'wrong password' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
       res_body = JSON.parse res.body
       expect(res_body["token"].size).to eq 64
@@ -115,23 +140,25 @@ RSpec.describe 'PollApp' do
 
     it 'unknown user' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-      res = browser.post('/login', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
-      expect(res.status).to eq 403
+      res = browser.post(
+                '/signup',
+                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { 'CONTENT_TYPE' => 'application/json' })
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
+      expect(res.status).to eq 401
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
     end
 
     it 'skip chalenge' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser.post('/login', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
-      expect(res.status).to eq 403
+      res = browser.post('/challenge_token', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
+      expect(res.status).to eq 401
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
       res = browser.post('/login', JSON.generate({ token: '' }), { 'CONTENT_TYPE' => 'application/json' })
-      expect(res.status).to eq 403
+      expect(res.status).to eq 401
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
     end
@@ -147,12 +174,17 @@ RSpec.describe 'PollApp' do
     context 'with valid id and params' do
       it 'adds a vote and redirects to /polls/:id' do
         browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-        browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        browser.post(
+                    '/signup',
+                    JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                    { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-        browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
+        browser.post(
+                    '/login',
+                    JSON.generate({ token: login_token }),
+                    { 'CONTENT_TYPE' => 'application/json' })
         res = nil
         expect {
           res = browser.post '/polls/0/votes', { candidate: 'Alice' }
@@ -168,10 +200,13 @@ RSpec.describe 'PollApp' do
         browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
         browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
 { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-        browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
+        browser.post(
+                    '/login',
+                    JSON.generate({ token: login_token }),
+                    { 'CONTENT_TYPE' => 'application/json' })
         res = nil
         expect {
           res = browser.post '/polls/1/votes', { candidate: 'Alice' }
@@ -184,9 +219,11 @@ RSpec.describe 'PollApp' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
       it 'responds 400 Bad Request' do
         browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-        browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/login', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        browser.post(
+                    '/signup',
+                    JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                    { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
         browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })

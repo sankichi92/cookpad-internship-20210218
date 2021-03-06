@@ -3,8 +3,6 @@ export interface KeyPair {
   salt: string;
 }
 
-console.log('ok');
-
 export function buf2str(buf: ArrayBuffer): string {
   const view = new Uint8Array(buf);
   return Array.prototype.map
@@ -79,10 +77,6 @@ export function hmac_pass(
   return new Promise((resolve, reject) => {
     hmac(str2buf(pass), str2buf(key)).then((digested) => {
       const raw_token = str2buf(token);
-      console.log('pass', buf2str(digested));
-      console.log('pass', new Uint8Array(digested));
-      console.log('token', new Uint8Array(raw_token));
-      console.log('token', token);
       hmac(digested, raw_token)
         .then((tok) => {
           resolve(buf2str(tok));
@@ -132,7 +126,6 @@ login_btn?.addEventListener('click', () => {
     const res = JSON.parse(xhr.response);
     const token: string = res.token;
     const salt: string = res.salt;
-    console.log('res', res);
     const raw_pass = new TextEncoder().encode(login_pass);
     hmac_pass(buf2str(raw_pass), salt, token).then((res) => {
       const xhr2 = new XMLHttpRequest();
@@ -148,7 +141,6 @@ login_btn?.addEventListener('click', () => {
       });
     });
   });
-  console.log(login_username);
   xhr.send(JSON.stringify({ user: login_username }));
 });
 
@@ -196,7 +188,6 @@ signup_btn?.addEventListener('click', () => {
         window.alert('既に登録されています');
       }
     });
-    console.log('pair', pair);
     xhr.send(
       JSON.stringify({
         user: signup_username,

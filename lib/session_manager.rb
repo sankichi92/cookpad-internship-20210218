@@ -1,5 +1,6 @@
 require_relative './authenticator'
 require 'openssl'
+require 'securerandom'
 
 class SessionManager
   attr_accessor :sessions, :authenticator
@@ -27,7 +28,7 @@ class SessionManager
 
   def start_login(sess, user)
     sess = sess.to_s
-    token = OpenSSL::BN.rand(256, 0, false).to_s(16)
+    token = SecureRandom.hex(32)
     res = {
       salt: @authenticator.req_salt(user),
       token: token,
