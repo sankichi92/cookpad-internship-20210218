@@ -52,4 +52,16 @@ RSpec.describe 'System' do
       end
     end
   end
+
+  context 'login' do
+    it 'GET /login' do
+      visit 'localhost:4567/login'
+      fill_in 'login-username', with: 'namachan'
+      fill_in 'login-password', with: 'the-password'
+      find_by_id('login-confirm').click
+      #expect(current_path).to eq('/')
+      #expect(page).to have_content('登録')
+      #expect(page).to have_content('追加')
+    end
+  end
 end
