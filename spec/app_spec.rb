@@ -189,54 +189,10 @@ RSpec.describe 'PollApp' do
       $polls = [poll]
     end
 
-    context 'with valid id and params' do
-      it 'adds a vote and redirects to /polls/:id' do
-        browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-        browser.post(
-                    '/signup',
-                    JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-                    { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
-        res_body = JSON.parse res.body
-        login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-        browser.post(
-                    '/login',
-                    JSON.generate({ token: login_token }),
-                    { 'CONTENT_TYPE' => 'application/json' })
-        res = nil
-        expect {
-          res = browser.post '/polls/0/votes', { candidate: 'Alice' }
-        }.to change { poll.votes.size }.by(1)
-        expect(res.status).to eq 303
-        expect(res.original_headers['Location']).to match %r{/polls/0$}
-      end
-    end
+    context 'with sucess of login' do
 
-    context 'with invalid id' do
-      browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      it 'responds 404 Not Found' do
-        browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-        browser.post('/signup', JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
-{ 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
-        res_body = JSON.parse res.body
-        login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-        browser.post(
-                    '/login',
-                    JSON.generate({ token: login_token }),
-                    { 'CONTENT_TYPE' => 'application/json' })
-        res = nil
-        expect {
-          res = browser.post '/polls/1/votes', { candidate: 'Alice' }
-        }.not_to change { poll.votes.size }
-        expect(res.status).to eq 404
-      end
-    end
-
-    context 'with invalid params' do
-      browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      it 'responds 400 Bad Request' do
-        browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
+      let(:browser) { Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application)) }
+      before do
         browser.post(
                     '/signup',
                     JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
@@ -245,12 +201,50 @@ RSpec.describe 'PollApp' do
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
         browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
-        res = nil
-        expect {
-          res = browser.post '/polls/0/votes', { voter: 'Miyoshi', candidate: 'INVALID' }
-        }.not_to change { poll.votes.size }
+      end
 
-        expect(res.status).to eq 400
+      context 'with valid id and params' do
+        it 'adds a vote and redirects to /polls/:id' do
+          res = nil
+          expect {
+            res = browser.post '/polls/0/votes', { candidate: 'Alice' }
+          }.to change { poll.votes.size }.by(1)
+          expect(res.status).to eq 303
+          expect(res.original_headers['Location']).to match %r{/polls/0$}
+        end
+      end
+
+      context 'with invalid id' do
+        it 'responds 404 Not Found' do
+          res = nil
+          expect {
+            res = browser.post '/polls/1/votes', { candidate: 'Alice' }
+          }.not_to change { poll.votes.size }
+          expect(res.status).to eq 404
+        end
+      end
+
+      context 'with invalid params' do
+        it 'responds 400 Bad Request' do
+          res = nil
+          expect {
+            res = browser.post '/polls/0/votes', { voter: 'Miyoshi', candidate: 'INVALID' }
+          }.not_to change { poll.votes.size }
+
+          expect(res.status).to eq 400
+        end
+      end
+    end
+    context 'with no login info' do
+      let(:browser) { Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application)) }
+      context 'with valid id and params' do
+        it 'be refused to add a votes to /polls/:id' do
+          res = nil
+          expect {
+            res = browser.post '/polls/0/votes', { candidate: 'Alice' }
+          }.to change { poll.votes.size }.by(0)
+          expect(res.status).to eq 403
+        end
       end
     end
   end
