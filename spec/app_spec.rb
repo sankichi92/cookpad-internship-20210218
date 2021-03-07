@@ -116,7 +116,7 @@ RSpec.describe 'PollApp' do
         res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
         expect(res.status).to eq 200
         res_body = JSON.parse res.body
-        expect(res_body["token"].size).to eq 64
+        expect(res_body["token"]).to match /\h{64}/
       end
 
       it 'unknown user' do

@@ -33,7 +33,7 @@ session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D2') }.to raise_er
       session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D')
       res1 = session_manager.start_login('SESS2', 'USER')
       expect(res1[:salt]).to eq 'PUBKEY'
-      expect(res1[:token].size).to eq 64
+      expect(res1[:token]).to match /\h{64}/
       expect(res1[:payload]).to eq nil
     end
 
@@ -56,7 +56,7 @@ session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D2') }.to raise_er
       session_manager.start_login('SESS1', 'USER')
       expect(session_manager.sessions['SESS1'][:user]).to eq 'USER'
       expect(session_manager.sessions['SESS1'][:login]).to eq false
-      expect(session_manager.sessions['SESS1'][:token].size).to eq 64
+      expect(session_manager.sessions['SESS1'][:token]).to match /\h{64}/
       expect(session_manager.sessions['SESS1'][:payload]).to eq nil
     end
 
@@ -68,7 +68,7 @@ session_manager.signup('SESS', 'USER', 'PUBKEY', 'DEADBEEF', 'D2') }.to raise_er
       session_manager.start_login('SESS', 'USER2')
       expect(session_manager.sessions['SESS'][:user]).to eq 'USER2'
       expect(session_manager.sessions['SESS'][:login]).to eq false
-      expect(session_manager.sessions['SESS'][:token].size).to eq 64
+      expect(session_manager.sessions['SESS'][:token]).to match /\h{64}/
       expect(session_manager.sessions['SESS'][:payload]).to eq 'D2'
     end
   end
