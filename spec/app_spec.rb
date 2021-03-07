@@ -77,7 +77,7 @@ RSpec.describe 'PollApp' do
       expect($sessions.sessions.length).to eq 0
       res = browser.post(
                 '/signup',
-                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                 { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 200
       expect($sessions.sessions.length).to eq 1
@@ -88,12 +88,12 @@ RSpec.describe 'PollApp' do
       expect($sessions.sessions.length).to eq 0
       res = browser.post(
                 '/signup',
-                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                 { 'CONTENT_TYPE' => 'application/json' })
       expect($sessions.sessions.length).to eq 1
       res = browser.post(
                 '/signup',
-                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                 { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 400
       expect($sessions.sessions.length).to eq 1
@@ -108,19 +108,19 @@ RSpec.describe 'PollApp' do
         $sessions = SessionManager.new()
         browser.post(
                   '/signup',
-                  JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                  { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                   { 'CONTENT_TYPE' => 'application/json' })
       end
 
       it 'request token' do
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', { user: 'namachan' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         expect(res.status).to eq 200
         res_body = JSON.parse res.body
         expect(res_body["token"]).to match /\h{64}/
       end
 
       it 'unknown user' do
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namahan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', { user: 'namahan' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         expect(res.status).to eq 401
         res_body = JSON.parse res.body
         expect(res_body["result"]).to eq false
@@ -132,7 +132,7 @@ RSpec.describe 'PollApp' do
         $sessions = SessionManager.new()
       end
       it 'unknown user' do
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', { user: 'namachan' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         expect(res.status).to eq 401
         res_body = JSON.parse res.body
         expect(res_body["result"]).to eq false
@@ -146,13 +146,13 @@ RSpec.describe 'PollApp' do
     before do
       browser.post(
                 '/signup',
-                JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                 { 'CONTENT_TYPE' => 'application/json' })
     end
 
     it 'skip chalenge' do
       browser2 = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
-      res = browser2.post('/login', JSON.generate({ token: '' }), { 'CONTENT_TYPE' => 'application/json' })
+      res = browser2.post('/login', { token: '' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
       expect(res.status).to eq 401
       res_body = JSON.parse res.body
       expect(res_body["result"]).to eq false
@@ -160,7 +160,7 @@ RSpec.describe 'PollApp' do
 
     context 'with success of challenge_token request' do
       let(:token) do
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', { user: 'namachan' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         res_body["token"]
       end
@@ -169,14 +169,14 @@ RSpec.describe 'PollApp' do
         login_token = calc_login_response(token, 'DEADBEEF')
         res = browser.post(
                   '/login',
-                  JSON.generate({ token: login_token }),
+                  { token: login_token }.to_json,
                   { 'CONTENT_TYPE' => 'application/json' })
         expect(JSON.parse(res.body)['result']).to eq true
       end
 
       it 'wrong password' do
         login_token = calc_login_response(token, 'BADBEEF')
-        res = browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/login', { token: login_token }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         expect(JSON.parse(res.body)['result']).to eq false
       end
     end
@@ -195,12 +195,12 @@ RSpec.describe 'PollApp' do
       before do
         browser.post(
                     '/signup',
-                    JSON.generate({ user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }),
+                    { user: 'namachan', pass: 'DEADBEEF', salt: 'PUBKEY' }.to_json,
                     { 'CONTENT_TYPE' => 'application/json' })
-        res = browser.post('/challenge_token', JSON.generate({ user: 'namachan' }), { 'CONTENT_TYPE' => 'application/json' })
+        res = browser.post('/challenge_token', { user: 'namachan' }.to_json, { 'CONTENT_TYPE' => 'application/json' })
         res_body = JSON.parse res.body
         login_token = calc_login_response(res_body["token"], 'DEADBEEF')
-        browser.post('/login', JSON.generate({ token: login_token }), { 'CONTENT_TYPE' => 'application/json' })
+        browser.post('/login', { token: login_token }.to_json, { 'CONTENT_TYPE' => 'application/json' })
       end
 
       context 'with valid id and params' do
