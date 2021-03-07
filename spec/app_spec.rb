@@ -101,7 +101,7 @@ RSpec.describe 'PollApp' do
     end
   end
 
-  describe 'POS /login' do
+  describe 'POST /login' do
     it 'login' do
       browser = Rack::Test::Session.new(Rack::MockSession.new(Sinatra::Application))
       res = browser.post(
