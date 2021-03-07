@@ -20,4 +20,4 @@ jobs:
         run: bundle exec ruby app.rb & sleep 1
 
       - name: Run RSpec
-        run: bundle exec rspec
+        run: bundle exec rspec -t ~capybara

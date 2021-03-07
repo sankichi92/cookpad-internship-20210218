@@ -2,7 +2,7 @@ require 'sinatra/test_helpers'
 require_relative 'spec_helper'
 require 'sinatra'
 
-RSpec.describe 'System' do
+RSpec.describe 'System', capybara: true do
   include Sinatra::TestHelpers
 
   before do
