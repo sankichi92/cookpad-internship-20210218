@@ -89,6 +89,10 @@ login_btn?.addEventListener('click', () => {
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.addEventListener('load', () => {
     const res = JSON.parse(xhr.response);
+    if (res.result == false) {
+      window.alert("ユーザが存在しません");
+      return;
+    }
     const token: string = res.token;
     const salt: string = res.salt;
     const raw_pass = new TextEncoder().encode(login_pass);
