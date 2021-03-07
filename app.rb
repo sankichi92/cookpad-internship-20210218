@@ -22,7 +22,6 @@ $sessions = SessionManager.new()
 
 get '/' do
   '投票一覧'
-  pp $sessions.request_info(session[:session_id])
   erb :index, locals: { polls: $polls, sess: $sessions.request_info(session[:session_id]) }
 end
 
