@@ -12,7 +12,7 @@ class TimeLimit
       @time = Time.parse(date + " 23:59:59 +0900")
     else
       now = Time.now
-      @time = Time.parse("#{now.year}-#{now.month}-#{now.day} " + time)
+      @time = Time.parse("#{now.year}-#{now.month}-#{now.day} " + time + "+0900")
     end
   end
 
